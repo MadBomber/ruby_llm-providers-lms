@@ -49,6 +49,36 @@ RubyLLM.models.refresh!
 RubyLLM.models.by_provider(:lms).each { |model| puts model.id }
 ```
 
+## The model catalog (models.json)
+
+The gem ships a `models.json` at its root. **This file is only a sample**,
+recorded from the author's machine: LM Studio serves whatever models *you*
+have downloaded, so your catalog will be different. RubyLLM loads the shipped
+file at registration time purely as a placeholder so `RubyLLM.models` has
+something to show before the first refresh.
+
+You never need to regenerate the shipped file. Your live server is always the
+source of truth:
+
+- **Chatting** needs no catalog at all — any model id LM Studio knows will
+  work (see above).
+- **Browsing and model metadata** come from `RubyLLM.models.refresh!`, which
+  queries your server directly. Call it once at application boot if you rely
+  on the catalog.
+- **A persisted, machine-specific catalog** (for offline inspection, or to
+  check into your own project) can be written with:
+
+  ```ruby
+  require 'ruby_llm/providers/lms'
+
+  provider = RubyLLM::Provider.resolve!(:lms).new(RubyLLM.config)
+  RubyLLM::Models.new(provider.list_models).save_to_json('my_models.json')
+  ```
+
+Don't try to edit the `models.json` inside the installed gem — it is
+overwritten on every gem update and is never consulted again after
+`RubyLLM.models.refresh!` runs.
+
 Embeddings work the same way:
 
 ```ruby
@@ -70,11 +100,10 @@ bundle exec rake models   # refresh models.json from your local server
 bundle exec rake          # rubocop, flay, archspec, specs
 ```
 
-`rake models` calls the local server's model-listing endpoints and writes
-`models.json` at the gem root. RubyLLM loads that catalog as a fallback when
-this provider is registered. Since LM Studio catalogs are machine-specific
-(they list whatever you have downloaded), the packaged catalog is only a
-sample — live listings via `RubyLLM.models.refresh!` reflect your machine.
+`rake models` calls the local server's model-listing endpoints and rewrites
+the sample `models.json` at the gem root (see "The model catalog" above) —
+it is a maintainer task for refreshing the shipped sample, not something gem
+users run.
 
 The suite always runs the provider integration specs. The first local run
 calls the API and records VCR cassettes; CI only replays committed cassettes.
