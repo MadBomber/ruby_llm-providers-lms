@@ -5,10 +5,14 @@ local models through LM Studio's OpenAI-compatible server (`lms server start`,
 `http://localhost:1234/v1` by default).
 
 The provider works out of the box: no API key, no configuration. It speaks the
-Chat Completions dialect by default and also registers the Responses protocol
-(LM Studio serves `/v1/responses` too). Model listings are enriched with details
-from LM Studio's native REST API (`/api/v0/models`): architecture, quantization,
-load state, context length, and tool/vision capabilities.
+Chat Completions dialect by default, registers the Responses protocol
+(LM Studio serves `/v1/responses` too), and adds a `:native_chat` protocol for
+LM Studio's own stateful REST API — server-stored conversations, reasoning
+control, server-side MCP tools, and performance stats (see "The native chat
+protocol"). Model listings are enriched with details from LM Studio's native
+REST API (`/api/v0/models`): architecture, quantization, load state, context
+length, and tool/vision capabilities. Model-management helpers load, unload,
+and download models through `/api/v1/models`.
 
 ## Installation
 
@@ -105,7 +109,7 @@ default). This gem talks to the first two:
 | --- | --- | --- |
 | OpenAI-compatible | `GET /v1/models`, `POST /v1/chat/completions`, `POST /v1/completions`, `POST /v1/embeddings`, `POST /v1/responses` | chat, tools, structured output, embeddings, Responses protocol |
 | Native REST v0 | `GET /api/v0/models`, `GET /api/v0/models/{model}`, `POST /api/v0/chat/completions`, `POST /api/v0/completions`, `POST /api/v0/embeddings` | model-listing enrichment |
-| Native REST v1 | `POST /api/v1/chat`, `GET /api/v1/list`, `POST /api/v1/load`, `POST /api/v1/unload`, `POST /api/v1/download`, `GET /api/v1/download-status` | not yet (see below) |
+| Native REST v1 | `POST /api/v1/chat`, `GET /api/v1/models`, `POST /api/v1/models/load`, `POST /api/v1/models/unload`, `POST /api/v1/models/download` | the `:native_chat` protocol and model management (see below) |
 
 ### Standard request parameters
 
@@ -120,9 +124,11 @@ and so on; nothing LM Studio-specific is required.
 
 ### LM Studio extras
 
-LM Studio also accepts request fields that are not part of OpenAI's
-vocabulary. RubyLLM merges `with_provider_options` into the request payload
-as-is, so all of these work today:
+LM Studio also accepts request fields on the OpenAI-compatible endpoints
+that are not part of OpenAI's vocabulary. RubyLLM merges
+`with_provider_options` into the request payload as-is, so all of these
+work today (the native chat protocol below rejects unknown keys — these
+belong to the OpenAI-compatible surface):
 
 | Option | What it does |
 | --- | --- |
@@ -166,28 +172,74 @@ The `state` field in this gem's model metadata (`loaded` / `not-loaded`)
 comes from the native v0 API and tells you which models are resident right
 now.
 
-### Native REST APIs (not yet wired up)
+## The native chat protocol
 
-The native APIs offer capabilities the OpenAI-compatible surface cannot
-express. This gem does not use them yet, beyond the v0 model-listing
-enrichment:
+LM Studio's native REST API (`POST /api/v1/chat`) offers capabilities the
+OpenAI-compatible surface cannot express. Select it per chat with
+`protocol: :native_chat` (or globally with
+`config.lms_protocol = :native_chat`):
 
-- **Performance stats** — native v0/v1 chat responses include a `stats`
-  object (tokens per second, time to first token, generation time, and
-  draft-token acceptance counts when speculative decoding is active) plus
-  `model_info` and `runtime` blocks.
-- **Stateful chats** — `/api/v1/chat` stores conversations server-side
-  (`store`, default true) and continues them via `previous_response_id`.
-- **Reasoning control** — `/api/v1/chat` takes a `reasoning` effort option
-  (`off` / `low` / `medium` / `high` / `on`) and returns reasoning output as
-  separate items.
-- **Server-side MCP tools** — `/api/v1/chat` can run tools itself through
-  `integrations`: pre-configured MCP plugins from `mcp.json` or ephemeral
-  MCP servers declared in the request, with `allowed_tools` filtering.
-- **Per-request context length** — `/api/v1/chat` accepts a
-  `context_length` override.
-- **Model management** — `/api/v1/load`, `/api/v1/unload`, `/api/v1/download`,
-  and `/api/v1/download-status` control what is in memory and on disk.
+```ruby
+chat = RubyLLM.chat(model: 'qwen/qwen3-4b', provider: :lms,
+                    protocol: :native_chat, assume_model_exists: true)
+response = chat.ask('Hello')
+```
+
+What it adds over the default Chat Completions protocol:
+
+- **Stateful conversations** — LM Studio stores each response server-side
+  and continues from a `response_id` instead of replaying history. Ordinary
+  RubyLLM multi-turn chats just work: each request sends only the new
+  messages and points `previous_response_id` at the last stored response.
+  The id is on `response.raw.body['response_id']`.
+- **Performance stats** — `response.raw.body['stats']` carries tokens per
+  second, time to first token, and token counts; `response.tokens` (input,
+  output, thinking) is filled from it.
+- **Reasoning control** — `chat.with_thinking(effort: :low)` maps onto the
+  native `reasoning` setting (`off` / `low` / `medium` / `high` / `on`;
+  models accept a subset — gpt-oss takes efforts, most others just on/off).
+  Reasoning output comes back separated as `response.thinking.text`,
+  streamed as thinking chunks.
+- **Server-side MCP tools** — pass
+  `with_provider_options(integrations: [...])` to have the server itself run
+  MCP plugins from `mcp.json` (`{ id: 'mcp/playwright' }`) or ephemeral MCP
+  servers declared in the request (`server_label` / `server_url`), with
+  optional `allowed_tools` filtering. Executed tool calls appear in
+  `response.raw.body['output']`.
+- **Per-request context length** — `with_provider_options(context_length: 8192)`.
+- **Opting out of storage** — `with_provider_options(store: false)` keeps the
+  conversation off the server, at the cost of multi-turn continuity.
+
+Limitations: the native API runs no client-side tools (RubyLLM `with_tools`
+raises — use `:chat_completions`, or MCP integrations), has no structured
+output (`with_schema` raises), and takes image input only (as `data_url`
+parts). Unknown request keys are rejected by the server, so the
+OpenAI-endpoint extras (`ttl`, `draft_model`, ...) don't apply here.
+
+## Model management
+
+The provider exposes LM Studio's native model-management endpoints, so you
+can control what is in memory without shelling out to `lms`:
+
+```ruby
+provider = RubyLLM::Provider.resolve!(:lms).new(RubyLLM.config)
+
+provider.native_models   # every downloaded model, with architecture,
+                         # quantization, capabilities, loaded_instances, ...
+provider.loaded_models   # just the ones resident in memory
+
+instance = provider.load_model('qwen/qwen3-4b', context_length: 8192)
+# => { "instance_id" => "qwen/qwen3-4b", "status" => "loaded", ... }
+provider.unload_model(instance['instance_id'])
+
+provider.download_model('qwen/qwen3-4b')  # fetch a new model onto disk
+```
+
+`load_model` returns the `instance_id` that `unload_model` takes; loading a
+model that is already resident starts a second instance (`...:2`), so hold
+on to the id you were given. Note that `ttl` is not a load option on the
+native API — set idle TTL per request through the OpenAI-compatible
+endpoints (see "LM Studio extras") or `lms load --ttl`.
 
 ## Development
 
@@ -210,5 +262,7 @@ API again.
 
 After refreshing the catalog, put real model IDs from your machine into
 `spec/support/models.rb`. Keep only the operation matrices LM Studio supports
-(chat, tools, structured output, embeddings). The portable contract specs are
+(chat, tools, structured output, embeddings, native chat — where the
+reasoning matrix needs a model that emits reasoning items, such as gpt-oss).
+The portable contract specs are
 adapted from [RubyLLM's live specs](https://github.com/crmne/ruby_llm/tree/main/spec/ruby_llm).

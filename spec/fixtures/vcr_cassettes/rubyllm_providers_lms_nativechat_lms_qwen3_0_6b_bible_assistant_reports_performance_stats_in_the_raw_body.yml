@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","input":"What''s 2 + 2?","stream":false,"reasoning":"off"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '685'
+      Etag:
+      - W/"2ad-m3Dezajg190YFxDNS+2hvMgdvKo"
+      Date:
+      - Fri, 11 Sep 2026 20:07:28 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJtb2RlbF9pbnN0YW5jZV9pZCI6ICJxd2VuMy0wLjZiLWJpYmxlLWFzc2lzdGFudCIsCiAgIm91dHB1dCI6IFsKICAgIHsKICAgICAgInR5cGUiOiAibWVzc2FnZSIsCiAgICAgICJjb250ZW50IjogIlRoZSBxdWVzdGlvbiBhc2tzIGZvciB0aGUgcmVzdWx0IG9mIGFkZGluZyB0d28gbnVtYmVycywgYW5kIGl0IGRvZXNuJ3Qgc3BlY2lmeSB3aGF0IHRoZSB2YWx1ZXMgYXJlLiBIb3dldmVyLCBpbiBzdGFuZGFyZCBtYXRoZW1hdGljYWwgdGVybXMsIDIgKyAyIHdvdWxkIGJlIDQuIElmIHlvdeKAmXJlIHJlZmVycmluZyB0byBzb21ldGhpbmcgZWxzZSBpbiBhIHNwZWNpZmljIGNvbnRleHQsIHBsZWFzZSBjbGFyaWZ5IHNvIEkgY2FuIHByb3ZpZGUgdGhlIHJpZ2h0IGFuc3dlci4iCiAgICB9CiAgXSwKICAic3RhdHMiOiB7CiAgICAiaW5wdXRfdG9rZW5zIjogMjAsCiAgICAidG90YWxfb3V0cHV0X3Rva2VucyI6IDYxLAogICAgInJlYXNvbmluZ19vdXRwdXRfdG9rZW5zIjogMCwKICAgICJ0b2tlbnNfcGVyX3NlY29uZCI6IDIxNy44MjA2MzE5NzAyNjAyMiwKICAgICJ0aW1lX3RvX2ZpcnN0X3Rva2VuX3NlY29uZHMiOiAwLjAwNTU5MTAwMDAwMDAwMDAwMDUKICB9LAogICJyZXNwb25zZV9pZCI6ICJyZXNwXzgwMzg2YTI0NTZmYzcxMWRiMjQwZDY0NTg1ODY1ZDYxNTExZTc1Y2UwMzc5NGY5OSIKfQ==
+  recorded_at: Fri, 11 Sep 2026 20:07:28 GMT
+recorded_with: VCR 6.4.0

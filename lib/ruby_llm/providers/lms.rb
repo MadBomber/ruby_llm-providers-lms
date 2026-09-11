@@ -3,6 +3,10 @@
 require 'ruby_llm'
 require 'ruby_llm/providers/lms/connection_guard'
 require 'ruby_llm/providers/lms/models'
+require 'ruby_llm/providers/lms/model_management'
+require 'ruby_llm/providers/lms/native_chat/conversation'
+require 'ruby_llm/providers/lms/native_chat/streaming'
+require 'ruby_llm/providers/lms/native_chat'
 
 module RubyLLM
   module Providers
@@ -20,6 +24,9 @@ module RubyLLM
 
       protocol :chat_completions, ChatCompletions
       protocol :responses, Protocols::Responses
+      protocol :native_chat, NativeChat
+
+      include ModelManagement
 
       def initialize(config)
         super
