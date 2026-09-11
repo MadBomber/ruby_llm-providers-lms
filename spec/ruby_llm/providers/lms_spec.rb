@@ -50,6 +50,10 @@ RSpec.describe RubyLLM::Providers::LMS do
     expect(provider.headers).to eq('Authorization' => 'Bearer test-key')
   end
 
+  it 'guards its connection against a server that is not running' do
+    expect(provider.connection).to be_a(described_class::ConnectionGuard)
+  end
+
   describe 'model listing' do
     subject(:protocol) do
       described_class::ChatCompletions.new(described_class.new(config))

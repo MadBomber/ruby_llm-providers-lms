@@ -40,13 +40,16 @@ response = chat.ask('Hello')
 puts response.content
 ```
 
+If the server isn't running, requests raise a `RubyLLM::Error` telling you to
+start it (`lms server start`) instead of a raw connection failure.
+
 Because LM Studio is a local provider, RubyLLM assumes any model id you pass
 exists — LM Studio will just-in-time load the model if it isn't loaded yet.
-To browse what the server offers:
+To browse what the server offers right now, ask the provider directly:
 
 ```ruby
-RubyLLM.models.refresh!
-RubyLLM.models.by_provider(:lms).each { |model| puts model.id }
+provider = RubyLLM::Provider.resolve!(:lms).new(RubyLLM.config)
+provider.list_models.each { |model| puts model.id }
 ```
 
 ## The model catalog (models.json)
@@ -54,30 +57,32 @@ RubyLLM.models.by_provider(:lms).each { |model| puts model.id }
 The gem ships a `models.json` at its root. **This file is only a sample**,
 recorded from the author's machine: LM Studio serves whatever models *you*
 have downloaded, so your catalog will be different. RubyLLM loads the shipped
-file at registration time purely as a placeholder so `RubyLLM.models` has
-something to show before the first refresh.
+file as the provider's model registry so `RubyLLM.models` has something to
+show.
 
-You never need to regenerate the shipped file. Your live server is always the
-source of truth:
+Note that `RubyLLM.models.refresh` does **not** query your LM Studio server:
+provider gems that ship a registry file are excluded from the live fetch, and
+refresh just re-reads the registered `models.json`. Your live server is still
+the source of truth, reached differently depending on what you need:
 
 - **Chatting** needs no catalog at all — any model id LM Studio knows will
   work (see above).
-- **Browsing and model metadata** come from `RubyLLM.models.refresh!`, which
-  queries your server directly. Call it once at application boot if you rely
-  on the catalog.
-- **A persisted, machine-specific catalog** (for offline inspection, or to
-  check into your own project) can be written with:
+- **Browsing what your server offers** is `provider.list_models` (see the
+  snippet above), which hits the live endpoints every time.
+- **Making `RubyLLM.models` reflect your machine** means registering your own
+  catalog file in place of the shipped sample:
 
   ```ruby
   require 'ruby_llm/providers/lms'
 
   provider = RubyLLM::Provider.resolve!(:lms).new(RubyLLM.config)
   RubyLLM::Models.new(provider.list_models).save_to_json('my_models.json')
+  RubyLLM::Provider.register :lms, RubyLLM::Providers::LMS, models: 'my_models.json'
+  RubyLLM.models.refresh
   ```
 
-Don't try to edit the `models.json` inside the installed gem — it is
-overwritten on every gem update and is never consulted again after
-`RubyLLM.models.refresh!` runs.
+Don't edit the `models.json` inside the installed gem — it is overwritten on
+every gem update; re-register with your own file instead.
 
 Embeddings work the same way:
 
