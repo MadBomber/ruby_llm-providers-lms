@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: "<LMS_API_BASE>/embeddings"
+    uri: "http://localhost:1234/v1/embeddings"
     body:
       encoding: UTF-8
       string: '{"model":"text-embedding-nomic-embed-text-v1.5","input":"Ruby is a

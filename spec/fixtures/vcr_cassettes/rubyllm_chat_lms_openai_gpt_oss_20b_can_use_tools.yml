@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: "<LMS_API_BASE>/chat/completions"
+    uri: "http://localhost:1234/v1/chat/completions"
     body:
       encoding: UTF-8
       string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"What''s
@@ -82,7 +82,7 @@ http_interactions:
   recorded_at: Fri, 11 Sep 2026 17:28:04 GMT
 - request:
     method: post
-    uri: "<LMS_API_BASE>/chat/completions"
+    uri: "http://localhost:1234/v1/chat/completions"
     body:
       encoding: UTF-8
       string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"What''s
