@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'ruby_llm'
+require 'ruby_llm/providers/lms/connection_guard'
 require 'ruby_llm/providers/lms/models'
 
 module RubyLLM
@@ -19,6 +20,11 @@ module RubyLLM
 
       protocol :chat_completions, ChatCompletions
       protocol :responses, Protocols::Responses
+
+      def initialize(config)
+        super
+        @connection = ConnectionGuard.new(@connection)
+      end
 
       def api_base
         @config.lms_api_base || DEFAULT_API_BASE
