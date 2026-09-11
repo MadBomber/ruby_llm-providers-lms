@@ -1,0 +1,129 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"What''s
+        the weather in Berlin? Use 52.5200, 13.4050."}],"stream":false,"tools":[{"type":"function","function":{"name":"","description":"Gets
+        current weather for a location","parameters":{"type":"object","properties":{"latitude":{"type":"string","description":"Latitude"},"longitude":{"type":"string","description":"Longitude"}},"required":["latitude","longitude"],"additionalProperties":false,"strict":true}}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '879'
+      Etag:
+      - W/"36f-cxGzH3DZRnQutMMM+dsgqVyBZjg"
+      Date:
+      - Fri, 11 Sep 2026 17:28:04 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "chatcmpl-80f0o9tdkt82gtn9t6q8ta",
+          "object": "chat.completion",
+          "created": 1789147683,
+          "model": "openai/gpt-oss-20b",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning": "We need to call weather function.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "id": "117069919",
+                    "function": {
+                      "name": "",
+                      "arguments": "{\"latitude\":\"52.5200\",\"longitude\":\"13.4050\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 146,
+            "completion_tokens": 42,
+            "total_tokens": 188,
+            "completion_tokens_details": {
+              "reasoning_tokens": 7
+            }
+          },
+          "stats": {},
+          "system_fingerprint": "openai/gpt-oss-20b"
+        }
+  recorded_at: Fri, 11 Sep 2026 17:28:04 GMT
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"What''s
+        the weather in Berlin? Use 52.5200, 13.4050."},{"role":"assistant","content":"","tool_calls":[{"id":"117069919","type":"function","function":{"name":"","arguments":"{\"latitude\":\"52.5200\",\"longitude\":\"13.4050\"}"}}],"reasoning":"We
+        need to call weather function.","reasoning_content":"We need to call weather
+        function."},{"role":"tool","content":"Current weather at 52.5200, 13.4050:
+        15°C, Wind: 10 km/h","tool_call_id":"117069919"}],"stream":false,"tools":[{"type":"function","function":{"name":"","description":"Gets
+        current weather for a location","parameters":{"type":"object","properties":{"latitude":{"type":"string","description":"Latitude"},"longitude":{"type":"string","description":"Longitude"}},"required":["latitude","longitude"],"additionalProperties":false,"strict":true}}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '781'
+      Etag:
+      - W/"30d-lBARRVGlBGe9sqYIa3IIttf2Jg0"
+      Date:
+      - Fri, 11 Sep 2026 17:28:06 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1ud3NrZTh6ODhjdmQxazFrZHV6dSIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4OTE0NzY4NCwKICAibW9kZWwiOiAib3BlbmFpL2dwdC1vc3MtMjBiIiwKICAiY2hvaWNlcyI6IFsKICAgIHsKICAgICAgImluZGV4IjogMCwKICAgICAgIm1lc3NhZ2UiOiB7CiAgICAgICAgInJvbGUiOiAiYXNzaXN0YW50IiwKICAgICAgICAiY29udGVudCI6ICIqKkJlcmxpbiAoNTIuNTIwMOKAr04sIDEzLjQwNTDigK9FKSoqICBcbi0gKipUZW1wZXJhdHVyZToqKiB+MTXigK/CsEMgIFxuLSAqKldpbmQ6KiogfjEw4oCva20vaCAgXG5cblRoZSBmb3JlY2FzdCBpcyBtaWxkIHdpdGggY2xlYXIgc2tpZXMuIEVuam95IHlvdXIgZGF5ISIsCiAgICAgICAgInJlYXNvbmluZyI6ICJXZSBuZWVkIHRvIHJlc3BvbmQgd2l0aCB3ZWF0aGVyLiIsCiAgICAgICAgInRvb2xfY2FsbHMiOiBbXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJzdG9wIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiAyMTMsCiAgICAiY29tcGxldGlvbl90b2tlbnMiOiA2NywKICAgICJ0b3RhbF90b2tlbnMiOiAyODAsCiAgICAiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6IHsKICAgICAgInJlYXNvbmluZ190b2tlbnMiOiA3CiAgICB9CiAgfSwKICAic3RhdHMiOiB7fSwKICAic3lzdGVtX2ZpbmdlcnByaW50IjogIm9wZW5haS9ncHQtb3NzLTIwYiIKfQ==
+  recorded_at: Fri, 11 Sep 2026 17:28:06 GMT
+recorded_with: VCR 6.4.0

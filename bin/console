@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'dotenv/load'
+require 'ruby_llm/providers/lms'
+
+require 'irb'
+
+RubyLLM.configure do |config|
+  config.lms_api_key = ENV.fetch('LMS_API_KEY', nil)
+  config.lms_api_base = ENV.fetch('LMS_API_BASE', 'http://localhost:1234/v1')
+end
+
+IRB.start(__FILE__)

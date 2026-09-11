@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"What''s
+        2 + 2?"}],"stream":false}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '623'
+      Etag:
+      - W/"26f-kDMLUbsR80Kkz1Ypkhx/iqdGgq8"
+      Date:
+      - Fri, 11 Sep 2026 17:27:56 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC10ZzNjczZlbXZ3OG95d3Q1Zjh6cDgiLAogICJvYmplY3QiOiAiY2hhdC5jb21wbGV0aW9uIiwKICAiY3JlYXRlZCI6IDE3ODkxNDc2NzYsCiAgIm1vZGVsIjogIm9wZW5haS9ncHQtb3NzLTIwYiIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAiMuKAryvigK8y4oCvPeKArzQuIiwKICAgICAgICAicmVhc29uaW5nIjogIlNpbXBsZSBtYXRoLiIsCiAgICAgICAgInRvb2xfY2FsbHMiOiBbXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJzdG9wIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiA3NCwKICAgICJjb21wbGV0aW9uX3Rva2VucyI6IDIzLAogICAgInRvdGFsX3Rva2VucyI6IDk3LAogICAgImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogMwogICAgfQogIH0sCiAgInN0YXRzIjoge30sCiAgInN5c3RlbV9maW5nZXJwcmludCI6ICJvcGVuYWkvZ3B0LW9zcy0yMGIiCn0=
+  recorded_at: Fri, 11 Sep 2026 17:27:56 GMT
+recorded_with: VCR 6.4.0

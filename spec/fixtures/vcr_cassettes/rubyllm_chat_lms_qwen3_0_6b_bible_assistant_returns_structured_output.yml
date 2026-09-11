@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","messages":[{"role":"user","content":"Generate
+        a person named John who is 30 years old"}],"stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"response","schema":{"type":"object","properties":{"name":{"type":"string"},"age":{"type":"integer"}},"required":["name","age"],"additionalProperties":false},"strict":true}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '651'
+      Etag:
+      - W/"28b-lfratyRiXi0QpzlkqmrOxIv8YeU"
+      Date:
+      - Fri, 11 Sep 2026 17:29:07 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "chatcmpl-84akgcg8nqgsycjy9uwqxh",
+          "object": "chat.completion",
+          "created": 1789147746,
+          "model": "qwen3-0.6b-bible-assistant",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"name\": \"John\", \"age\": 30}",
+                "reasoning_content": "",
+                "tool_calls": []
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 20,
+            "completion_tokens": 18,
+            "total_tokens": 38,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "stats": {},
+          "system_fingerprint": "qwen3-0.6b-bible-assistant"
+        }
+  recorded_at: Fri, 11 Sep 2026 17:29:07 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","messages":[{"role":"user","content":"What
+        is the capital of France?"}],"stream":false}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '649'
+      Etag:
+      - W/"289-z0+P8ZlD0mrrOcJUeEGw9Sfrl2Q"
+      Date:
+      - Fri, 11 Sep 2026 17:27:15 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "chatcmpl-ajko3wpu2rrkmje2qrqcts",
+          "object": "chat.completion",
+          "created": 1789147635,
+          "model": "qwen3-0.6b-bible-assistant",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "The capital of France is Paris.",
+                "reasoning_content": "",
+                "tool_calls": []
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 15,
+            "completion_tokens": 12,
+            "total_tokens": 27,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "stats": {},
+          "system_fingerprint": "qwen3-0.6b-bible-assistant"
+        }
+  recorded_at: Fri, 11 Sep 2026 17:27:15 GMT
+recorded_with: VCR 6.4.0

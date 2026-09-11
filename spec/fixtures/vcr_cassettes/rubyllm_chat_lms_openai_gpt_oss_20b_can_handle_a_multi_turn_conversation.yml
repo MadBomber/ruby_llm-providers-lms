@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"Who
+        created the programming language Ruby?"}],"stream":false}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '859'
+      Etag:
+      - W/"35b-PewDTjLQ6JpT6DNfbSOXC+RE95Q"
+      Date:
+      - Fri, 11 Sep 2026 17:27:55 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1kNWkyM3Y2dWhhY3l6NnZ3Y29ldm8iLAogICJvYmplY3QiOiAiY2hhdC5jb21wbGV0aW9uIiwKICAiY3JlYXRlZCI6IDE3ODkxNDc2NzMsCiAgIm1vZGVsIjogIm9wZW5haS9ncHQtb3NzLTIwYiIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAiUnVieSB3YXMgY3JlYXRlZCBieSAqKll1a2loaXJvIOKAnE1hdHrigJ0gTWF0c3Vtb3RvKiouIEhlIHN0YXJ0ZWQgZGV2ZWxvcGluZyB0aGUgbGFuZ3VhZ2UgaW4gMTk5MyBhbmQgcmVsZWFzZWQgaXQgcHVibGljbHkgaW4gMTk5NSwgYWltaW5nIHRvIGNvbWJpbmUgcGFydHMgb2YgaGlzIGZhdm9yaXRlIGxhbmd1YWdlcyB3aGlsZSBlbXBoYXNpemluZyBwcm9ncmFtbWVyIGhhcHBpbmVzcyBhbmQgcHJvZHVjdGl2aXR5LiIsCiAgICAgICAgInJlYXNvbmluZyI6ICJBbnN3ZXI6IFl1a2loaXJvIE1hdHN1bW90by4iLAogICAgICAgICJ0b29sX2NhbGxzIjogW10KICAgICAgfSwKICAgICAgImxvZ3Byb2JzIjogbnVsbCwKICAgICAgImZpbmlzaF9yZWFzb24iOiAic3RvcCIKICAgIH0KICBdLAogICJ1c2FnZSI6IHsKICAgICJwcm9tcHRfdG9rZW5zIjogNzQsCiAgICAiY29tcGxldGlvbl90b2tlbnMiOiA3MCwKICAgICJ0b3RhbF90b2tlbnMiOiAxNDQsCiAgICAiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6IHsKICAgICAgInJlYXNvbmluZ190b2tlbnMiOiA5CiAgICB9CiAgfSwKICAic3RhdHMiOiB7fSwKICAic3lzdGVtX2ZpbmdlcnByaW50IjogIm9wZW5haS9ncHQtb3NzLTIwYiIKfQ==
+  recorded_at: Fri, 11 Sep 2026 17:27:55 GMT
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"Who
+        created the programming language Ruby?"},{"role":"assistant","content":"Ruby
+        was created by **Yukihiro “Matz” Matsumoto**. He started developing the language
+        in 1993 and released it publicly in 1995, aiming to combine parts of his favorite
+        languages while emphasizing programmer happiness and productivity.","reasoning":"Answer:
+        Yukihiro Matsumoto.","reasoning_content":"Answer: Yukihiro Matsumoto."},{"role":"user","content":"What
+        year was Ruby first released?"}],"stream":false}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '699'
+      Etag:
+      - W/"2bb-swU6OvSQEMJL7SbMLy00YyLs2b8"
+      Date:
+      - Fri, 11 Sep 2026 17:27:56 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1pczV2Z3hiczY1bzl4ZmNzOTdxaDUiLAogICJvYmplY3QiOiAiY2hhdC5jb21wbGV0aW9uIiwKICAiY3JlYXRlZCI6IDE3ODkxNDc2NzUsCiAgIm1vZGVsIjogIm9wZW5haS9ncHQtb3NzLTIwYiIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAiUnVieSB3YXMgZmlyc3QgcmVsZWFzZWQgaW4gKioxOTk1KiogKHNwZWNpZmljYWxseSwgdmVyc2lvbuKArzAuOTUgb24gQXVndXN0IDI1LCAxOTk1KS4iLAogICAgICAgICJyZWFzb25pbmciOiAiTmVlZCBhbnN3ZXI6IDE5OTUuIiwKICAgICAgICAidG9vbF9jYWxscyI6IFtdCiAgICAgIH0sCiAgICAgICJsb2dwcm9icyI6IG51bGwsCiAgICAgICJmaW5pc2hfcmVhc29uIjogInN0b3AiCiAgICB9CiAgXSwKICAidXNhZ2UiOiB7CiAgICAicHJvbXB0X3Rva2VucyI6IDE0MiwKICAgICJjb21wbGV0aW9uX3Rva2VucyI6IDQ0LAogICAgInRvdGFsX3Rva2VucyI6IDE4NiwKICAgICJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjogewogICAgICAicmVhc29uaW5nX3Rva2VucyI6IDcKICAgIH0KICB9LAogICJzdGF0cyI6IHt9LAogICJzeXN0ZW1fZmluZ2VycHJpbnQiOiAib3BlbmFpL2dwdC1vc3MtMjBiIgp9
+  recorded_at: Fri, 11 Sep 2026 17:27:56 GMT
+recorded_with: VCR 6.4.0

@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<LMS_API_BASE>/chat/completions"
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","messages":[{"role":"user","content":"What''s
+        2 + 2?"}],"stream":false}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1584'
+      Etag:
+      - W/"630-uxTKlpT7zFB12JjOC6YqfjQu48o"
+      Date:
+      - Fri, 11 Sep 2026 17:27:15 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "chatcmpl-4gslx40t72mvc15qpsyea",
+          "object": "chat.completion",
+          "created": 1789147635,
+          "model": "qwen3-0.6b-bible-assistant",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"issue_question\": \"\", \"verse\": \"Matthew 11:30-34 - For this is good, and pleasing to God. But if you have anything to give, give it all; and if not, give to a friend, and to a neighbor in need. Whoever receives evil will be tempted again when he is about to receive it.\", \"explanation\": \"Matthew 11:30-34 teaches that generosity is good and pleasing to God, but the way you distribute your resources matters. It encourages giving everything (not being burdened) and giving to others in need while also considering relationships with friends. This shifts the focus from hoarding to serving others and sharing without fear of loss.\", \"guidance\": [\"Give all as possible options, even if it means helping someone else.\", \"Focus on supporting others rather than controlling resources.\", \"Be mindful of your limits; give what you cannot afford or have less confidence in.\", \"Set clear boundaries so you don't overextend yourself.\"], \"note\": \"\"}",
+                "reasoning_content": "",
+                "tool_calls": []
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 16,
+            "completion_tokens": 217,
+            "total_tokens": 233,
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "stats": {},
+          "system_fingerprint": "qwen3-0.6b-bible-assistant"
+        }
+  recorded_at: Fri, 11 Sep 2026 17:27:15 GMT
+recorded_with: VCR 6.4.0
