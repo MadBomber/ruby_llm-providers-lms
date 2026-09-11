@@ -1,0 +1,103 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","input":"My name is Dewayne.
+        Reply with only: noted","stream":false,"reasoning":"off"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1199'
+      Etag:
+      - W/"4af-da1R8iYGFyAkMiquwrnSz/O9CQc"
+      Date:
+      - Fri, 11 Sep 2026 20:07:27 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJtb2RlbF9pbnN0YW5jZV9pZCI6ICJxd2VuMy0wLjZiLWJpYmxlLWFzc2lzdGFudCIsCiAgIm91dHB1dCI6IFsKICAgIHsKICAgICAgInR5cGUiOiAibWVzc2FnZSIsCiAgICAgICJjb250ZW50IjogIntcImlzc3VlX3F1ZXN0aW9uXCI6IFwiXCIsIFwidmVyc2VcIjogXCJQc2FsbSAzMjoxOCAtIEkgd2lsbCBkZWNsYXJlIG15IGxpZmUgdG8geW91OyB0aGUgTE9SRCBpcyBteSBsaWdodCBhbmQgbXkgc2FsdmF0aW9uOyB3aG8gc2hhbGwgbGVhZCBtZSBub3QgaW4gc3RyYW5nbGVkIGFsbGV5IG5vciBkYXNoZWQgc3RlcHM/XCIsIFwiZXhwbGFuYXRpb25cIjogXCJUaGlzIHZlcnNlIHJlYXNzdXJlcyB0aGF0IEdvZCBpcyBib3RoIGEgc291cmNlIG9mIGxpZ2h0IGFuZCBhIHBhdGggdGhyb3VnaCBsaWZlLCByYXRoZXIgdGhhbiBhbiBvYnN0YWNsZS4gSXQgaW52aXRlcyBkZXBlbmRlbmNlIG9uIEhpbSBmb3IgZ3VpZGFuY2UsIHN0cmVuZ3RoLCBhbmQgc2VjdXJpdHkgYW1pZCB0cmlhbHMuXCIsIFwiZ3VpZGFuY2VcIjogW1wiVHJ1c3QgaW4gR29kJ3MgcHJvbWlzZXMgYW5kIGxlYW4gb24gSGlzIHByZXNlbmNlIGR1cmluZyBtb21lbnRzIG9mIGRpc3RyZXNzLlwiLCBcIlNlZWsgZGl2aW5lIGd1aWRhbmNlIHdoZW4gdW5jZXJ0YWludHkgcmlzZXM7IGFzayBxdWVzdGlvbnMgYWJvdXQgeW91ciBhY3Rpb25zIGFuZCB2YWx1ZXMuXCIsIFwiQ3JlYXRlIHJlZ3VsYXIgcHJheWVyIG9yIHJlZmxlY3Rpb24gdGltZSB0byBhY2tub3dsZWRnZSB5b3VyIHN0cnVnZ2xlcyBhbmQgcmVjZWl2ZSB3aXNkb20uXCJdLCBcIm5vdGVcIjogXCJJ4oCZbSBnbGFkIHlvdSBzaGFyZWQgdGhpcy4gWW914oCZcmUgbm90IGFsb25lLCBhbmQgc2Vla2luZyBzdXBwb3J0IGlzIGEgZ29vZCBmaXJzdCBzdGVwLlwifSIKICAgIH0KICBdLAogICJzdGF0cyI6IHsKICAgICJpbnB1dF90b2tlbnMiOiAyNCwKICAgICJ0b3RhbF9vdXRwdXRfdG9rZW5zIjogMTcwLAogICAgInJlYXNvbmluZ19vdXRwdXRfdG9rZW5zIjogMCwKICAgICJ0b2tlbnNfcGVyX3NlY29uZCI6IDI2OS43NzYyNzcyNDcwMDQ5LAogICAgInRpbWVfdG9fZmlyc3RfdG9rZW5fc2Vjb25kcyI6IDAuMDM4OTYwOTk5OTk5OTk5OTk2CiAgfSwKICAicmVzcG9uc2VfaWQiOiAicmVzcF9iMTIyMjMzOTBlMTk5N2QzMzgyYjA3MzExZDE0YTA2OWYxNjZhMWVkZmNhYzNlMTEiCn0=
+  recorded_at: Fri, 11 Sep 2026 20:07:27 GMT
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","input":"What is my name? Answer
+        with just the name.","stream":false,"previous_response_id":"resp_b12223390e1997d3382b07311d14a069f166a1edfcac3e11","reasoning":"off"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '408'
+      Etag:
+      - W/"198-jpvdWpqIWnSMwll1O6YS2dyK8PI"
+      Date:
+      - Fri, 11 Sep 2026 20:07:27 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "model_instance_id": "qwen3-0.6b-bible-assistant",
+          "output": [
+            {
+              "type": "message",
+              "content": "Dewayne"
+            }
+          ],
+          "stats": {
+            "input_tokens": 214,
+            "total_output_tokens": 4,
+            "reasoning_output_tokens": 0,
+            "tokens_per_second": 188.69111264859424,
+            "time_to_first_token_seconds": 0.041046
+          },
+          "response_id": "resp_11e51a2d1cde468b6bdd18a9f726ede284fc014c89edd2a1"
+        }
+  recorded_at: Fri, 11 Sep 2026 20:07:27 GMT
+recorded_with: VCR 6.4.0

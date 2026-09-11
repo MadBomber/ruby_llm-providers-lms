@@ -18,8 +18,13 @@ RSpec.describe RubyLLM::Providers::LMS do
   it 'registers its protocols' do
     expect(described_class.protocols).to include(
       chat_completions: described_class::ChatCompletions,
-      responses: RubyLLM::Protocols::Responses
+      responses: RubyLLM::Protocols::Responses,
+      native_chat: described_class::NativeChat
     )
+  end
+
+  it 'keeps chat_completions as the default protocol' do
+    expect(described_class.default_protocol).to eq(:chat_completions)
   end
 
   it 'declares provider configuration' do

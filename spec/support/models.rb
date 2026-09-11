@@ -18,6 +18,18 @@ STRUCTURED_OUTPUT_MODELS = [
 EMBEDDING_MODELS = [
   { provider: PROVIDER, model: 'text-embedding-nomic-embed-text-v1.5' }
 ].freeze
+
+# The native /api/v1/chat protocol (protocol: :native_chat). The reasoning
+# matrix needs a model that emits reasoning items (gpt-oss does; most
+# instruct fine-tunes do not); the management model should be small so
+# load/unload cycles stay fast.
+NATIVE_CHAT_MODELS = [
+  { provider: PROVIDER, model: 'qwen3-0.6b-bible-assistant' }
+].freeze
+NATIVE_REASONING_MODELS = [
+  { provider: PROVIDER, model: 'openai/gpt-oss-20b' }
+].freeze
+MANAGEMENT_MODEL = 'qwen3-0.6b-bible-assistant'
 IMAGE_GENERATION_MODELS = [].freeze
 SPEECH_MODELS = [].freeze
 VIDEO_GENERATION_MODELS = [].freeze
