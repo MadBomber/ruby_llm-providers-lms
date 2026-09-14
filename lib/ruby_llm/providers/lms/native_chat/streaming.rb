@@ -49,7 +49,8 @@ module RubyLLM
               input_tokens: stats['input_tokens'],
               output_tokens: stats['total_output_tokens'],
               thinking_tokens: stats['reasoning_output_tokens'],
-              finish_reason: :stop
+              finish_reason: finish_reason_for(stats),
+              raw_content: conversation_state(result)
             )
           end
 

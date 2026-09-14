@@ -12,16 +12,32 @@ module RubyLLM
         module Conversation
           RESPONSE_ID_PATTERN = /"response_id"\s*:\s*"(resp_[0-9a-f]+)"/
 
+          # What an assistant message has to carry for the next turn to
+          # continue from it. It goes on Message#raw_content because that is
+          # the slot RubyLLM persists and rebuilds (see
+          # ActiveRecord::MessageMethods#to_llm) — Message#raw holds a
+          # Faraday::Response that lasts only as long as the request, so a
+          # chat reloaded from the database would have nothing to continue
+          # from. The stock Mistral and Gemini stateful protocols use
+          # raw_content the same way.
+          def conversation_state(data)
+            response_id = data['response_id']
+            { 'response_id' => response_id } if response_id
+          end
+
           # The `response_id` of the stored server-side response +message+
-          # came from, or nil. Reads the parsed response body, falling back
-          # to scanning raw SSE text.
+          # came from, or nil. Prefers the persisted copy, then the parsed
+          # response body, then raw SSE text.
           def response_id_from(message)
             return nil unless message.role == :assistant
 
-            body = message.raw&.body
-            case body
-            when Hash then body['response_id']
-            when String then body.scan(RESPONSE_ID_PATTERN).flatten.last
+            stored_response_id(message.raw_content) || stored_response_id(message.raw&.body)
+          end
+
+          def stored_response_id(source)
+            case source
+            when Hash then source['response_id']
+            when String then source.scan(RESPONSE_ID_PATTERN).flatten.last
             end
           end
 

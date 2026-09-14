@@ -1,0 +1,182 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","input":[{"role":"user","content":"What''s
+        the temperature in Berlin?"}],"stream":false,"store":false,"include":["reasoning.encrypted_content"],"tools":[{"type":"function","name":"","description":"Gets
+        the current temperature for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"City
+        name"}},"required":["city"],"additionalProperties":false,"strict":true},"strict":false}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1973'
+      Etag:
+      - W/"7b5-Wk8t+Z50QrQHHt+tVaHmAb+3XaY"
+      Date:
+      - Mon, 14 Sep 2026 19:06:35 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "resp_cf1e97b5013c8a2060ca8a4a4101ef61ebaf6ecd67d83c3e",
+          "object": "response",
+          "created_at": 1789412794,
+          "completed_at": 1789412795,
+          "status": "completed",
+          "incomplete_details": null,
+          "model": "openai/gpt-oss-20b",
+          "previous_response_id": null,
+          "instructions": null,
+          "output": [
+            {
+              "id": "rs_uurhy3887n04839gx88tkd",
+              "type": "reasoning",
+              "status": "completed",
+              "summary": [],
+              "content": [
+                {
+                  "type": "reasoning_text",
+                  "text": "Need to call function."
+                }
+              ]
+            },
+            {
+              "id": "fc_ejhi54b7ton3zf34wyt81f",
+              "call_id": "call_516284801530001",
+              "type": "function_call",
+              "name": "",
+              "arguments": "{\"city\":\"Berlin\"}",
+              "status": "completed"
+            }
+          ],
+          "error": null,
+          "tools": [
+            {
+              "type": "function",
+              "name": "",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City name"
+                  }
+                },
+                "required": [
+                  "city"
+                ],
+                "additionalProperties": false
+              },
+              "strict": false,
+              "description": "Gets the current temperature for a city"
+            }
+          ],
+          "tool_choice": "auto",
+          "truncation": "auto",
+          "parallel_tool_calls": true,
+          "text": {
+            "format": {
+              "type": "text"
+            }
+          },
+          "top_p": 0.8,
+          "presence_penalty": 0,
+          "frequency_penalty": 1.1,
+          "top_logprobs": 0,
+          "temperature": 0.8,
+          "reasoning": {
+            "summary": null,
+            "effort": null
+          },
+          "usage": {
+            "input_tokens": 69,
+            "output_tokens": 5,
+            "total_tokens": 74,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens_details": {
+              "reasoning_tokens": 5
+            }
+          },
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "store": false,
+          "background": false,
+          "service_tier": "default",
+          "metadata": {},
+          "safety_identifier": null,
+          "prompt_cache_key": null
+        }
+  recorded_at: Mon, 14 Sep 2026 19:06:35 GMT
+- request:
+    method: post
+    uri: http://localhost:1234/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","input":[{"role":"user","content":"What''s
+        the temperature in Berlin?"},{"type":"function_call","call_id":"call_516284801530001","name":"","arguments":"{\"city\":\"Berlin\"}"},{"type":"function_call_output","call_id":"call_516284801530001","output":"It
+        is 15°C in Berlin."}],"stream":false,"store":false,"include":["reasoning.encrypted_content"],"tools":[{"type":"function","name":"","description":"Gets
+        the current temperature for a city","parameters":{"type":"object","properties":{"city":{"type":"string","description":"City
+        name"}},"required":["city"],"additionalProperties":false,"strict":true},"strict":false}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '2130'
+      Etag:
+      - W/"852-L26XVaG8Haae3/EvOmJpGnpaCQk"
+      Date:
+      - Mon, 14 Sep 2026 19:06:36 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJyZXNwXzc5ZDYyZWJhN2RkODdkOWExZjBjMGUwNGI0NjQ0MGZhZDYzYTI0YzZhNTM3NGJkNSIsCiAgIm9iamVjdCI6ICJyZXNwb25zZSIsCiAgImNyZWF0ZWRfYXQiOiAxNzg5NDEyNzk1LAogICJjb21wbGV0ZWRfYXQiOiAxNzg5NDEyNzk2LAogICJzdGF0dXMiOiAiY29tcGxldGVkIiwKICAiaW5jb21wbGV0ZV9kZXRhaWxzIjogbnVsbCwKICAibW9kZWwiOiAib3BlbmFpL2dwdC1vc3MtMjBiIiwKICAicHJldmlvdXNfcmVzcG9uc2VfaWQiOiBudWxsLAogICJpbnN0cnVjdGlvbnMiOiBudWxsLAogICJvdXRwdXQiOiBbCiAgICB7CiAgICAgICJpZCI6ICJyc191NzNpdzBrMGZ2cDlxbGs1cjJ5MjBuIiwKICAgICAgInR5cGUiOiAicmVhc29uaW5nIiwKICAgICAgInN0YXR1cyI6ICJjb21wbGV0ZWQiLAogICAgICAic3VtbWFyeSI6IFtdLAogICAgICAiY29udGVudCI6IFsKICAgICAgICB7CiAgICAgICAgICAidHlwZSI6ICJyZWFzb25pbmdfdGV4dCIsCiAgICAgICAgICAidGV4dCI6ICJVc2VyIGFza2VkIHRlbXBlcmF0dXJlIGluIEJlcmxpbi4gUHJvdmlkZSBhbnN3ZXIuIgogICAgICAgIH0KICAgICAgXQogICAgfSwKICAgIHsKICAgICAgImlkIjogIm1zZ194a3g5ZXpnZm1hZTFsOTN0YXF0dno4aSIsCiAgICAgICJ0eXBlIjogIm1lc3NhZ2UiLAogICAgICAicm9sZSI6ICJhc3Npc3RhbnQiLAogICAgICAic3RhdHVzIjogImNvbXBsZXRlZCIsCiAgICAgICJjb250ZW50IjogWwogICAgICAgIHsKICAgICAgICAgICJ0eXBlIjogIm91dHB1dF90ZXh0IiwKICAgICAgICAgICJ0ZXh0IjogIlRoZSBjdXJyZW50IHRlbXBlcmF0dXJlIGluIEJlcmxpbiBpcyAqKjE14oCvwrBDKiouIiwKICAgICAgICAgICJhbm5vdGF0aW9ucyI6IFtdLAogICAgICAgICAgImxvZ3Byb2JzIjogW10KICAgICAgICB9CiAgICAgIF0KICAgIH0KICBdLAogICJlcnJvciI6IG51bGwsCiAgInRvb2xzIjogWwogICAgewogICAgICAidHlwZSI6ICJmdW5jdGlvbiIsCiAgICAgICJuYW1lIjogIiIsCiAgICAgICJwYXJhbWV0ZXJzIjogewogICAgICAgICJ0eXBlIjogIm9iamVjdCIsCiAgICAgICAgInByb3BlcnRpZXMiOiB7CiAgICAgICAgICAiY2l0eSI6IHsKICAgICAgICAgICAgInR5cGUiOiAic3RyaW5nIiwKICAgICAgICAgICAgImRlc2NyaXB0aW9uIjogIkNpdHkgbmFtZSIKICAgICAgICAgIH0KICAgICAgICB9LAogICAgICAgICJyZXF1aXJlZCI6IFsKICAgICAgICAgICJjaXR5IgogICAgICAgIF0sCiAgICAgICAgImFkZGl0aW9uYWxQcm9wZXJ0aWVzIjogZmFsc2UKICAgICAgfSwKICAgICAgInN0cmljdCI6IGZhbHNlLAogICAgICAiZGVzY3JpcHRpb24iOiAiR2V0cyB0aGUgY3VycmVudCB0ZW1wZXJhdHVyZSBmb3IgYSBjaXR5IgogICAgfQogIF0sCiAgInRvb2xfY2hvaWNlIjogImF1dG8iLAogICJ0cnVuY2F0aW9uIjogImF1dG8iLAogICJwYXJhbGxlbF90b29sX2NhbGxzIjogdHJ1ZSwKICAidGV4dCI6IHsKICAgICJmb3JtYXQiOiB7CiAgICAgICJ0eXBlIjogInRleHQiCiAgICB9CiAgfSwKICAidG9wX3AiOiAwLjgsCiAgInByZXNlbmNlX3BlbmFsdHkiOiAwLAogICJmcmVxdWVuY3lfcGVuYWx0eSI6IDEuMSwKICAidG9wX2xvZ3Byb2JzIjogMCwKICAidGVtcGVyYXR1cmUiOiAwLjgsCiAgInJlYXNvbmluZyI6IHsKICAgICJzdW1tYXJ5IjogbnVsbCwKICAgICJlZmZvcnQiOiBudWxsCiAgfSwKICAidXNhZ2UiOiB7CiAgICAiaW5wdXRfdG9rZW5zIjogMTY4LAogICAgIm91dHB1dF90b2tlbnMiOiAyMCwKICAgICJ0b3RhbF90b2tlbnMiOiAxODgsCiAgICAiaW5wdXRfdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJjYWNoZWRfdG9rZW5zIjogMAogICAgfSwKICAgICJvdXRwdXRfdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogOQogICAgfQogIH0sCiAgIm1heF9vdXRwdXRfdG9rZW5zIjogbnVsbCwKICAibWF4X3Rvb2xfY2FsbHMiOiBudWxsLAogICJzdG9yZSI6IGZhbHNlLAogICJiYWNrZ3JvdW5kIjogZmFsc2UsCiAgInNlcnZpY2VfdGllciI6ICJkZWZhdWx0IiwKICAibWV0YWRhdGEiOiB7fSwKICAic2FmZXR5X2lkZW50aWZpZXIiOiBudWxsLAogICJwcm9tcHRfY2FjaGVfa2V5IjogbnVsbAp9
+  recorded_at: Mon, 14 Sep 2026 19:06:36 GMT
+recorded_with: VCR 6.4.0

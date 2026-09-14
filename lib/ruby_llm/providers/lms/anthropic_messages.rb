@@ -13,13 +13,12 @@ module RubyLLM
       # Unlike the real Anthropic API, LM Studio wants no credentials and no
       # anthropic-version header.
       #
+      # Model listing and embeddings are not this protocol's business: both
+      # stay on the OpenAI-compatible endpoints LM Studio serves on the same
+      # port, routed there by the provider itself.
+      #
       #   RubyLLM.configure { |config| config.lms_protocol = :anthropic }
       class AnthropicMessages < Protocols::Anthropic
-        # Model listing stays on the OpenAI-compatible /v1/models endpoint
-        # that every LM Studio build serves; Anthropic's own listing shape
-        # is not part of what LM Studio exposes.
-        include LMS::Models
-
         def completion_url
           'messages'
         end

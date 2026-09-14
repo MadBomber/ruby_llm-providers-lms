@@ -1,7 +1,7 @@
 [
   {
     "id": "qwen/qwen3.8-27b",
-    "name": "qwen/qwen3.8-27b",
+    "name": "Qwen3.8 27B",
     "provider": "lms",
     "family": "qwen35",
     "created_at": null,
@@ -21,7 +21,9 @@
       "streaming",
       "structured_output",
       "function_calling",
-      "vision"
+      "tool_choice",
+      "vision",
+      "reasoning"
     ],
     "pricing": {},
     "metadata": {
@@ -30,12 +32,35 @@
       "arch": "qwen35",
       "compatibility_type": "gguf",
       "quantization": "Q4_K_M",
-      "state": "not-loaded"
+      "bits_per_weight": 4,
+      "state": "not-loaded",
+      "display_name": "Qwen3.8 27B",
+      "params_string": "27B",
+      "size_bytes": 17742039110,
+      "variants": [
+        "qwen/qwen3.8-27b@q4_k_m"
+      ],
+      "selected_variant": "qwen/qwen3.8-27b@q4_k_m",
+      "reasoning_options": [
+        {
+          "type": "effort",
+          "values": [
+            "none",
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "default": "xhigh"
+        },
+        {
+          "type": "toggle"
+        }
+      ]
     }
   },
   {
     "id": "unlimited-ocr",
-    "name": "unlimited-ocr",
+    "name": "Unlimited OCR",
     "provider": "lms",
     "family": "deepseek2-ocr",
     "created_at": null,
@@ -63,12 +88,16 @@
       "arch": "deepseek2-ocr",
       "compatibility_type": "gguf",
       "quantization": "IQ2_M",
-      "state": "not-loaded"
+      "bits_per_weight": 2,
+      "state": "not-loaded",
+      "display_name": "Unlimited OCR",
+      "params_string": "64x550M",
+      "size_bytes": 2044024672
     }
   },
   {
     "id": "kimi-k2.7-code",
-    "name": "kimi-k2.7-code",
+    "name": "Kimi K2.7 Code UD",
     "provider": "lms",
     "family": "deepseek2",
     "created_at": null,
@@ -96,299 +125,18 @@
       "arch": "deepseek2",
       "compatibility_type": "gguf",
       "quantization": "IQ1_M",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "qwen/qwen3.6-35b-a3b",
-    "name": "qwen/qwen3.6-35b-a3b",
-    "provider": "lms",
-    "family": "qwen3_5_moe",
-    "created_at": null,
-    "context_window": 262144,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text",
-        "image"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output",
-      "function_calling",
-      "vision"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "qwen",
-      "arch": "qwen3_5_moe",
-      "compatibility_type": "mlx",
-      "quantization": "4bit",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "bibleai",
-    "name": "bibleai",
-    "provider": "lms",
-    "family": "gemma4",
-    "created_at": null,
-    "context_window": 131072,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "rhemabible",
-      "arch": "gemma4",
-      "compatibility_type": "gguf",
-      "quantization": "Q8_0",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "bible-study-phi3-mini",
-    "name": "bible-study-phi3-mini",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 4096,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "Phora68",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_M",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "qwen3-0.6b-bible-assistant",
-    "name": "qwen3-0.6b-bible-assistant",
-    "provider": "lms",
-    "family": "qwen3",
-    "created_at": null,
-    "context_window": 40960,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output",
-      "function_calling"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "juvereturn",
-      "arch": "qwen3",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_M",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "kimi-k2.6-control-vectors",
-    "name": "kimi-k2.6-control-vectors",
-    "provider": "lms",
-    "family": "controlvector",
-    "created_at": null,
-    "context_window": null,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "gghfez",
-      "arch": "controlvector",
-      "compatibility_type": "gguf",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "eloyon/christian-bible-expert-v2.0-24b",
-    "name": "eloyon/christian-bible-expert-v2.0-24b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "EloyOn",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q5_0",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "eloyon/baptist-christian-bible-expert-v2.0-22b",
-    "name": "eloyon/baptist-christian-bible-expert-v2.0-22b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output",
-      "function_calling"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "EloyOn",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q5_0",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "reformed-christian-bible-expert-v2.1-12b-mlx",
-    "name": "reformed-christian-bible-expert-v2.1-12b-mlx",
-    "provider": "lms",
-    "family": "mistral",
-    "created_at": null,
-    "context_window": 131072,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output",
-      "function_calling"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "brianroberg",
-      "arch": "mistral",
-      "compatibility_type": "mlx",
-      "quantization": "bf16",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "christian-bible-expert-v2.0-12b",
-    "name": "christian-bible-expert-v2.0-12b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 131072,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output",
-      "function_calling"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "EloyOn",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q5_0",
-      "state": "not-loaded"
+      "bits_per_weight": 1,
+      "state": "not-loaded",
+      "display_name": "Kimi K2.7 Code UD",
+      "params_string": "384x14B",
+      "size_bytes": 305793771748
     }
   },
   {
     "id": "text-embedding-nomic-embed-text-v1.5",
-    "name": "text-embedding-nomic-embed-text-v1.5",
+    "name": "Nomic Embed Text v1.5",
     "provider": "lms",
-    "family": "nomic-bert",
+    "family": "lms",
     "created_at": null,
     "context_window": 2048,
     "max_output_tokens": null,
@@ -406,15 +154,17 @@
     "metadata": {
       "owned_by": "organization_owner",
       "publisher": "nomic-ai",
-      "arch": "nomic-bert",
       "compatibility_type": "gguf",
       "quantization": "Q4_K_M",
-      "state": "not-loaded"
+      "bits_per_weight": 4,
+      "state": "not-loaded",
+      "display_name": "Nomic Embed Text v1.5",
+      "size_bytes": 84106624
     }
   },
   {
     "id": "openai/gpt-oss-20b",
-    "name": "openai/gpt-oss-20b",
+    "name": "GPT-OSS 20B",
     "provider": "lms",
     "family": "gpt_oss",
     "created_at": null,
@@ -432,7 +182,9 @@
     "capabilities": [
       "streaming",
       "structured_output",
-      "function_calling"
+      "function_calling",
+      "tool_choice",
+      "reasoning"
     ],
     "pricing": {},
     "metadata": {
@@ -441,163 +193,26 @@
       "arch": "gpt_oss",
       "compatibility_type": "mlx",
       "quantization": "8bit",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "nondenominational-christian-bible-expert-v2.0-24b",
-    "name": "nondenominational-christian-bible-expert-v2.0-24b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
+      "bits_per_weight": 8,
+      "state": "not-loaded",
+      "display_name": "GPT-OSS 20B",
+      "params_string": "20B",
+      "size_bytes": 22256625356,
+      "variants": [
+        "openai/gpt-oss-20b@8bit"
       ],
-      "output": [
-        "text"
+      "selected_variant": "openai/gpt-oss-20b@8bit",
+      "reasoning_options": [
+        {
+          "type": "effort",
+          "values": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "default": "low"
+        }
       ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "mradermacher",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_S",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "mradermacher/baptist-christian-bible-expert-v2.0-22b",
-    "name": "mradermacher/baptist-christian-bible-expert-v2.0-22b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output",
-      "function_calling"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "mradermacher",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_S",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "protestant-christian-bible-expert-v2.0-24b",
-    "name": "protestant-christian-bible-expert-v2.0-24b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "mradermacher",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_S",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "mradermacher/christian-bible-expert-v2.0-24b",
-    "name": "mradermacher/christian-bible-expert-v2.0-24b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "mradermacher",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_S",
-      "state": "not-loaded"
-    }
-  },
-  {
-    "id": "baptist-christian-bible-expert-v2.0-24b",
-    "name": "baptist-christian-bible-expert-v2.0-24b",
-    "provider": "lms",
-    "family": "llama",
-    "created_at": null,
-    "context_window": 32768,
-    "max_output_tokens": null,
-    "knowledge_cutoff": null,
-    "modalities": {
-      "input": [
-        "text"
-      ],
-      "output": [
-        "text"
-      ]
-    },
-    "capabilities": [
-      "streaming",
-      "structured_output"
-    ],
-    "pricing": {},
-    "metadata": {
-      "owned_by": "organization_owner",
-      "publisher": "mradermacher",
-      "arch": "llama",
-      "compatibility_type": "gguf",
-      "quantization": "Q4_K_S",
-      "state": "not-loaded"
     }
   }
 ]

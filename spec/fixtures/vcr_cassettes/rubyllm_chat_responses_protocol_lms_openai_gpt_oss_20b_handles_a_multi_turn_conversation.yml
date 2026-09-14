@@ -1,0 +1,240 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","input":[{"role":"user","content":"My
+        name is Dewayne. Reply with only: noted"}],"stream":false,"store":false,"include":["reasoning.encrypted_content"]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1633'
+      Etag:
+      - W/"661-M6npV6CK5caoyCTz57frCatHOlg"
+      Date:
+      - Mon, 14 Sep 2026 19:06:32 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "resp_924778c3212490f7aad3270e94a67930685b359143c9cdf8",
+          "object": "response",
+          "created_at": 1789412792,
+          "completed_at": 1789412792,
+          "status": "completed",
+          "incomplete_details": null,
+          "model": "openai/gpt-oss-20b",
+          "previous_response_id": null,
+          "instructions": null,
+          "output": [
+            {
+              "id": "rs_vku4ppdkcgqj5k2jrn2g9o",
+              "type": "reasoning",
+              "status": "completed",
+              "summary": [],
+              "content": [
+                {
+                  "type": "reasoning_text",
+                  "text": "User wants reply \"noted\"."
+                }
+              ]
+            },
+            {
+              "id": "msg_cs7mqslifpm8wqj0kh2yxw",
+              "type": "message",
+              "role": "assistant",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "text": "noted",
+                  "annotations": [],
+                  "logprobs": []
+                }
+              ]
+            }
+          ],
+          "error": null,
+          "tools": [],
+          "tool_choice": "auto",
+          "truncation": "auto",
+          "parallel_tool_calls": true,
+          "text": {
+            "format": {
+              "type": "text"
+            }
+          },
+          "top_p": 0.8,
+          "presence_penalty": 0,
+          "frequency_penalty": 1.1,
+          "top_logprobs": 0,
+          "temperature": 0.8,
+          "reasoning": {
+            "summary": null,
+            "effort": null
+          },
+          "usage": {
+            "input_tokens": 77,
+            "output_tokens": 8,
+            "total_tokens": 85,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens_details": {
+              "reasoning_tokens": 7
+            }
+          },
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "store": false,
+          "background": false,
+          "service_tier": "default",
+          "metadata": {},
+          "safety_identifier": null,
+          "prompt_cache_key": null
+        }
+  recorded_at: Mon, 14 Sep 2026 19:06:32 GMT
+- request:
+    method: post
+    uri: http://localhost:1234/v1/responses
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","input":[{"role":"user","content":"My
+        name is Dewayne. Reply with only: noted"},{"role":"assistant","content":[{"type":"output_text","text":"noted"}]},{"role":"user","content":"What
+        is my name? Answer with just the name."}],"stream":false,"store":false,"include":["reasoning.encrypted_content"]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1665'
+      Etag:
+      - W/"681-5BEFlrAjBAWmzS9iVP93vVATu+I"
+      Date:
+      - Mon, 14 Sep 2026 19:06:33 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "resp_11a4f44b8723d7b78eb40ac3a814d2310cfb3ac2d6d325d7",
+          "object": "response",
+          "created_at": 1789412792,
+          "completed_at": 1789412793,
+          "status": "completed",
+          "incomplete_details": null,
+          "model": "openai/gpt-oss-20b",
+          "previous_response_id": null,
+          "instructions": null,
+          "output": [
+            {
+              "id": "rs_4qfutv0lghy4cjy3sk2ewy",
+              "type": "reasoning",
+              "status": "completed",
+              "summary": [],
+              "content": [
+                {
+                  "type": "reasoning_text",
+                  "text": "User says name Dewayne earlier. Just reply \"Dewayne\"."
+                }
+              ]
+            },
+            {
+              "id": "msg_a3cgcg0ft9mffd63qdduv5",
+              "type": "message",
+              "role": "assistant",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "text": "Dewayne",
+                  "annotations": [],
+                  "logprobs": []
+                }
+              ]
+            }
+          ],
+          "error": null,
+          "tools": [],
+          "tool_choice": "auto",
+          "truncation": "auto",
+          "parallel_tool_calls": true,
+          "text": {
+            "format": {
+              "type": "text"
+            }
+          },
+          "top_p": 0.8,
+          "presence_penalty": 0,
+          "frequency_penalty": 1.1,
+          "top_logprobs": 0,
+          "temperature": 0.8,
+          "reasoning": {
+            "summary": null,
+            "effort": null
+          },
+          "usage": {
+            "input_tokens": 21,
+            "output_tokens": 16,
+            "total_tokens": 37,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens_details": {
+              "reasoning_tokens": 14
+            }
+          },
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "store": false,
+          "background": false,
+          "service_tier": "default",
+          "metadata": {},
+          "safety_identifier": null,
+          "prompt_cache_key": null
+        }
+  recorded_at: Mon, 14 Sep 2026 19:06:33 GMT
+recorded_with: VCR 6.4.0

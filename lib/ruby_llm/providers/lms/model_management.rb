@@ -9,9 +9,13 @@ module RubyLLM
       # listing downloaded models with their loaded instances, loading a model
       # (optionally with a context-length override), unloading an instance,
       # and downloading a new model.
+      #
+      # Every write here is sent non-idempotent. RubyLLM's Faraday stack
+      # retries a POST that times out or loses its connection, and none of
+      # these are safe to replay: LM Studio answers a second load of a
+      # resident model by starting a second instance, so a slow load that
+      # timed out would end up holding the weights in memory twice.
       module ModelManagement
-        NATIVE_V1_MODELS_URL = '../api/v1/models'
-
         # Every downloaded model with its native details (architecture,
         # quantization, capabilities, loaded_instances, ...), as an Array of
         # Hashes straight from the server.
@@ -29,19 +33,25 @@ module RubyLLM
         # options go into the request as-is (the server rejects unknown keys).
         def load_model(model, context_length: nil, **options)
           payload = { model: model, context_length: context_length, **options }.compact
-          connection.post("#{NATIVE_V1_MODELS_URL}/load", payload).body
+          post_model_action('load', payload)
         end
 
         # Unloads the loaded instance named +instance_id+ (from #load_model's
         # response or a native listing's 'loaded_instances').
         def unload_model(instance_id)
-          connection.post("#{NATIVE_V1_MODELS_URL}/unload", { instance_id: instance_id }).body
+          post_model_action('unload', { instance_id: instance_id })
         end
 
         # Asks the server to download +model+ (a model key such as
         # 'qwen/qwen3-4b'). Extra keyword options go into the request as-is.
         def download_model(model, **)
-          connection.post("#{NATIVE_V1_MODELS_URL}/download", { model: model, ** }).body
+          post_model_action('download', { model: model, ** })
+        end
+
+        private
+
+        def post_model_action(action, payload)
+          connection.post("#{NATIVE_V1_MODELS_URL}/#{action}", payload, idempotent: false).body
         end
       end
     end

@@ -2,9 +2,11 @@
 
 require 'ruby_llm'
 require 'ruby_llm/providers/lms/version'
+require 'ruby_llm/providers/lms/endpoints'
 require 'ruby_llm/providers/lms/connection_guard'
 require 'ruby_llm/providers/lms/native_v1'
 require 'ruby_llm/providers/lms/models'
+require 'ruby_llm/providers/lms/responses'
 require 'ruby_llm/providers/lms/anthropic_messages'
 require 'ruby_llm/providers/lms/model_management'
 require 'ruby_llm/providers/lms/native_chat/conversation'
@@ -43,7 +45,7 @@ module RubyLLM
       end
 
       protocol :chat_completions, ChatCompletions
-      protocol :responses, Protocols::Responses
+      protocol :responses, Responses
       protocol :native_chat, NativeChat
       protocol :native_v0, NativeChatCompletions
       protocol :anthropic, AnthropicMessages
@@ -65,6 +67,19 @@ module RubyLLM
         { 'Authorization' => "Bearer #{@config.lms_api_key}" }
       end
 
+      # LM Studio serves POST /v1/embeddings on the same port whichever chat
+      # dialect is in effect, so lms_protocol has no say over where an
+      # embedding goes. RubyLLM would otherwise resolve embeddings to the
+      # configured chat protocol — and :anthropic refuses them outright
+      # rather than falling back to the OpenAI endpoint.
+      def embed(text, model:, dimensions:, **)
+        embedding_protocol(model).embed(text, model: model_id_for(model), dimensions: dimensions, **)
+      end
+
+      def render_embedding(text, model:, dimensions: nil) # :nodoc:
+        embedding_protocol(model).render_embedding(text, model: model_id_for(model), dimensions: dimensions)
+      end
+
       class << self
         def display_name
           'LM Studio'
@@ -81,6 +96,12 @@ module RubyLLM
         def local?
           true
         end
+      end
+
+      private
+
+      def embedding_protocol(model)
+        protocols.fetch(:chat_completions).new(self, model)
       end
     end
   end

@@ -18,7 +18,7 @@ RSpec.describe RubyLLM::Providers::LMS do
   it 'registers its protocols' do
     expect(described_class.protocols).to include(
       chat_completions: described_class::ChatCompletions,
-      responses: RubyLLM::Protocols::Responses,
+      responses: described_class::Responses,
       native_chat: described_class::NativeChat,
       native_v0: described_class::NativeChatCompletions,
       anthropic: described_class::AnthropicMessages
@@ -46,8 +46,35 @@ RSpec.describe RubyLLM::Providers::LMS do
     expect(protocol.completion_url).to eq('messages')
   end
 
-  it 'lists models over the OpenAI-compatible endpoint on the anthropic protocol' do
-    expect(described_class::AnthropicMessages.new(provider).models_url).to eq('models')
+  # RubyLLM always lists models through the provider's *default* protocol
+  # (Provider#listing_protocol reads self.class.default_protocol, never the
+  # configured one), so the enrichment only has to live on :chat_completions.
+  # Carrying a second copy on the other protocols was dead weight that implied
+  # a routing rule that does not exist.
+  it 'keeps the model listing on the default protocol alone' do
+    expect(described_class::ChatCompletions).to include(described_class::Models)
+    expect(described_class::AnthropicMessages).not_to include(described_class::Models)
+    expect(described_class::NativeChat).not_to include(described_class::Models)
+  end
+
+  it 'lists models over the OpenAI-compatible endpoint whatever protocol is configured' do
+    config.lms_protocol = :anthropic
+    listing = described_class.new(config).send(:listing_protocol)
+
+    expect(listing).to eq(described_class::ChatCompletions)
+    expect(listing.new(provider).models_url).to eq('models')
+  end
+
+  # One spelling of each native path, shared by the listing enrichment and
+  # the model-management calls, so the two can never drift apart.
+  it 'names the native endpoints in one place' do
+    expect(described_class::NATIVE_V1_MODELS_URL).to eq('../api/v1/models')
+    expect(described_class::NATIVE_V0_MODELS_URL).to eq('../api/v0/models')
+
+    [described_class::Models, described_class::ModelManagement].each do |consumer|
+      expect(consumer.const_defined?(:NATIVE_V1_MODELS_URL, false)).to be(false)
+      expect(consumer.const_defined?(:NATIVE_V0_MODELS_URL, false)).to be(false)
+    end
   end
 
   it 'declares provider configuration' do
@@ -117,9 +144,30 @@ RSpec.describe RubyLLM::Providers::LMS do
     end
 
     describe '#build_capabilities' do
-      it 'derives function calling from reported tool_use' do
+      it 'derives function calling and tool choice from reported tool_use' do
         expect(protocol.build_capabilities(llm_detail))
-          .to eq(%w[streaming structured_output function_calling])
+          .to eq(%w[streaming structured_output function_calling tool_choice])
+      end
+
+      it 'withholds tool choice from a model not trained for tool use' do
+        expect(protocol.build_capabilities(vlm_detail)).not_to include('tool_choice')
+      end
+
+      # LM Studio constrains generation with a grammar built from the schema,
+      # so structured output holds for any LLM it serves, tool-trained or not.
+      # Verified against bible-study-phi3-mini, which reports tool_use false
+      # and still answers a json_schema request with conforming JSON.
+      it 'claims structured output for every chat model the server serves' do
+        expect(protocol.build_capabilities(vlm_detail)).to include('structured_output')
+      end
+
+      it 'declares reasoning when the listing reports reasoning options' do
+        detail = protocol.normalize_v1_detail(
+          'type' => 'llm',
+          'capabilities' => { 'reasoning' => { 'allowed_options' => %w[off on] } }
+        )
+
+        expect(protocol.build_capabilities(detail)).to include('reasoning')
       end
 
       it 'derives vision from the model type' do
@@ -148,7 +196,12 @@ RSpec.describe RubyLLM::Providers::LMS do
           'params_string' => '27B',
           'max_context_length' => 262_144,
           'format' => 'gguf',
-          'loaded_instances' => [{ 'id' => 'instance', 'config' => { 'context_length' => 8192 } }],
+          'description' => 'A reasoning model.',
+          'variants' => ['qwen/qwen3-27b@q4_k_m', 'qwen/qwen3-27b@q8_0'],
+          'selected_variant' => 'qwen/qwen3-27b@q4_k_m',
+          'loaded_instances' => [{ 'id' => 'instance',
+                                   'config' => { 'context_length' => 8192 },
+                                   'remaining_ttl_seconds' => 1050 }],
           'capabilities' => {
             'vision' => true,
             'trained_for_tool_use' => true,
@@ -170,8 +223,27 @@ RSpec.describe RubyLLM::Providers::LMS do
           'display_name' => 'Qwen3 27B',
           'params_string' => '27B',
           'size_bytes' => 17_742_039_110,
-          'reasoning_options' => %w[off on],
-          'loaded_context_length' => 8192
+          'bits_per_weight' => 4,
+          'description' => 'A reasoning model.',
+          'variants' => ['qwen/qwen3-27b@q4_k_m', 'qwen/qwen3-27b@q8_0'],
+          'selected_variant' => 'qwen/qwen3-27b@q4_k_m',
+          'reasoning_options' => [{ 'type' => 'effort', 'values' => %w[none] }, { 'type' => 'toggle' }],
+          'loaded_context_length' => 8192,
+          'remaining_ttl_seconds' => 1050
+        )
+      end
+
+      it 'carries the v1-only fields through to model metadata' do
+        response = instance_double(Faraday::Response, body: { 'data' => [{ 'id' => 'qwen/qwen3-27b' }] })
+        details = { 'qwen/qwen3-27b' => protocol.normalize_v1_detail(v1_model) }
+        metadata = protocol.parse_list_models_response(response, 'lms', details: details).first.metadata
+
+        expect(metadata).to include(
+          description: 'A reasoning model.',
+          variants: ['qwen/qwen3-27b@q4_k_m', 'qwen/qwen3-27b@q8_0'],
+          selected_variant: 'qwen/qwen3-27b@q4_k_m',
+          bits_per_weight: 4,
+          remaining_ttl_seconds: 1050
         )
       end
 

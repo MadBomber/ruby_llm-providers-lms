@@ -25,10 +25,11 @@ Gem::Specification.new do |spec|
   spec.metadata['bug_tracker_uri'] = "#{spec.homepage}/issues"
   spec.metadata['rubygems_mfa_required'] = 'true'
 
-  spec.files = Dir.glob('{lib,spec}/**/*') +
-               Dir.glob('.github/workflows/*.yml') +
+  # Ship what the gem needs at runtime. The suite and its VCR cassettes --
+  # recorded conversations with the author's own models -- stay in the repo.
+  spec.files = Dir.glob('lib/**/*.rb') +
                Dir.glob('models.json') +
-               %w[.flayignore .overcommit.yml .rspec .rubocop.yml Archspec.rb CHANGELOG.md LICENSE README.md]
+               %w[CHANGELOG.md LICENSE README.md]
   spec.require_paths = ['lib']
 
   spec.add_dependency 'ruby_llm', '>= 2.0.0.rc1'

@@ -26,5 +26,25 @@ RSpec.describe RubyLLM::Chat, :live do
       expect(response.content).to include('10')
       expect(chat.messages.any?(&:tool_call?)).to be(true)
     end
+
+    # LM Studio accepts tool_choice ("auto" / "none" / "required") for every
+    # model it serves, which is what the catalog capability describes.
+    it "#{provider}/#{model} declares tool choice in the live listing" do
+      listed = RubyLLM::Provider.resolve!(:lms).new(RubyLLM.config).list_models.find { |m| m.id == model }
+
+      expect(listed.supports?(:function_calling)).to be(true)
+      expect(listed.supports?(:tool_choice)).to be(true)
+    end
+  end
+
+  each_model(TOOL_CHOICE_MODELS) do |provider, model|
+    it "#{provider}/#{model} honours a forced tool choice" do
+      chat = RubyLLM.chat(model: model, provider: provider, assume_model_exists: true)
+                    .with_tools(weather_tool)
+                    .with_tool_options(choice: :required)
+      chat.ask('Say hello. Use 52.5200, 13.4050 if you need coordinates.')
+
+      expect(chat.messages.any?(&:tool_call?)).to be(true)
+    end
   end
 end
