@@ -20,3 +20,10 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Pinned because .gitleaks.toml relies on an allowlist scoped with
+          # condition = "AND". The action's own default (8.24.3) ignores that
+          # key and falls back to OR, which would allowlist every cassette
+          # wholesale instead of just the model-id lines -- blinding the scan
+          # to a token genuinely leaked into one. Verified on 8.30.1: a
+          # high-entropy value in the same field and file is still reported.
+          GITLEAKS_VERSION: 8.30.1
