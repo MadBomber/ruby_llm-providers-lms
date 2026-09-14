@@ -1,0 +1,25 @@
+# Gitleaks configuration.
+#
+# The default rules apply unchanged. The one allowance below exists because
+# LM Studio's native model listing names each model under a JSON field called
+# "key" — `{"key": "qwen3-0.6b-bible-assistant", ...}` — and the recorded VCR
+# cassettes for the model-listing specs contain the whole catalog. The
+# generic-api-key rule reads any field spelled "key" with a long enough value
+# as a credential, so a catalog of model ids trips it a dozen times over.
+#
+# The allowance is deliberately narrow: it applies only to a "key" field in a
+# cassette, and only where the value looks like a model id (lowercase letters,
+# digits, and the separators LM Studio uses). It is scoped with condition =
+# "AND", so a cassette that leaked a real token would still be reported —
+# Authorization headers are redacted at record time by
+# spec/support/vcr_configuration.rb, and this keeps the scanner watching them.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "LM Studio model ids in recorded VCR cassettes"
+condition = "AND"
+paths = ['''spec/fixtures/vcr_cassettes/.*\.yml$''']
+regexTarget = "line"
+regexes = ['''"key":\s*"[a-z0-9][a-z0-9._@/-]*",?\s*$''']
