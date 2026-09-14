@@ -85,13 +85,18 @@ Stay on the default unless you need something only another column offers.
 | Client-side tools (`with_tools`) | yes | yes | yes | yes | **no** — raises; use MCP integrations |
 | Structured output (`with_schema`) | yes | **ignored, silently** | **ignored, silently** | yes | **no** — raises |
 | Inference stats | no | no | no | yes, via `raw` | yes, via `tokens` |
-| LM Studio request extras | yes | yes | yes | yes | **no** — server rejects them |
+| LM Studio request extras | yes | yes | yes | yes | sampling only — see below |
 | Server-stored conversations | no | no | no | no | yes |
-| Reasoning control | no | no | no | no | yes |
+| Reasoning control | yes | yes | **no** | yes | yes |
+| Reasoning text returned | yes | yes | no | yes | yes |
 
 Checked against LM Studio 0.4.24+1 (see [Tested against](#tested-against)).
 Where a protocol ignores something silently rather than raising, the section
 below says so — those are the cases that cost you an afternoon.
+
+"Reasoning control" means `with_thinking` reaches the server. Whether a
+given *model* reasons at all is a separate question — see
+[Reasoning](#reasoning).
 
 ---
 
@@ -113,6 +118,67 @@ You reach all of it through RubyLLM's normal API — `with_temperature`,
 `with_max_output_tokens`, `with_tools`, `with_schema`,
 `chat.ask(with: 'image.png')` — nothing LM Studio-specific required.
 
+## Reasoning
+
+LM Studio honors OpenAI's `reasoning_effort` on `/v1/chat/completions` and
+answers with `reasoning_content` and a `reasoning_tokens` count, which RubyLLM
+reads into `Message#thinking` and `response.tokens.thinking`:
+
+```ruby
+chat = RubyLLM.chat(model: 'qwen/qwen3-4b', provider: :lms)
+response = chat.with_thinking(effort: :low).ask('What is 2 + 2?')
+
+response.content              # => "4"
+response.thinking.text        # => "The user is asking a simple arithmetic question..."
+response.tokens.thinking      # => 40
+```
+
+`chat.with_thinking` with no arguments, and `chat.with_thinking(false)`, both
+resolve against the model registry: the provider reads each model's
+`capabilities.reasoning` from LM Studio's native listing and records it as
+RubyLLM reasoning options, so RubyLLM knows which efforts the model takes and
+whether it can be switched off at all.
+
+The two chat surfaces spell the vocabulary differently, and the provider
+translates between them so your code does not have to:
+
+| | Accepted values |
+| --- | --- |
+| `/v1/chat/completions`, `/v1/responses`, `/api/v0/chat/completions` | `none`, `minimal`, `low`, `medium`, `high`, `xhigh` |
+| `/api/v1/chat` (`:native_chat`) | `off`, `low`, `medium`, `high`, `xhigh`, `on` |
+| RubyLLM's registry (what `Model#reasoning_options` reports) | the first row, plus a `:toggle` option where LM Studio offers `on` |
+
+A model that reports no way to stop reasoning — gpt-oss lists only
+`low`/`medium`/`high` — makes `with_thinking(false)` raise, which is the
+registry telling you the truth about the model rather than a gap in the
+catalog.
+
+Reasoning is a per-model trait, and the surfaces differ in how they treat a
+model that has none. The OpenAI endpoints accept `reasoning_effort` for any
+model and simply ignore it; `POST /api/v1/chat` rejects the request outright:
+
+```
+Model 'bible-study-phi3-mini' does not expose reasoning configuration.
+```
+
+So on `:native_chat`, only ask for reasoning from a model whose listing
+reports it. `with_thinking` and `with_thinking(false)` already refuse
+client-side for a model in the registry that reports none; an explicit
+`with_thinking(effort:)`, or a model id not in your catalog, reaches the
+server and gets the error above.
+
+Which efforts you can ask for depends on what you have downloaded:
+
+```ruby
+model = RubyLLM.models.find('qwen/qwen3-4b')
+model.supports?(:reasoning)                  # => true
+model.reasoning_option_values(:effort)       # => ["none", "low", "medium", "xhigh"]
+```
+
+That information comes from the native listing, so it is only in
+`RubyLLM.models` for models present in the catalog you registered — see
+[The packaged catalog](#the-packaged-catalog-modelsjson).
+
 ## Responses — `:responses`
 
 LM Studio also serves OpenAI's newer Responses API at `POST /v1/responses`,
@@ -122,15 +188,25 @@ and RubyLLM's stock Responses protocol drives it:
 RubyLLM.configure { |config| config.lms_protocol = :responses }
 ```
 
-Streaming and client-side tools work. **`with_schema` does not** — LM Studio
-ignores the schema on this endpoint and nothing raises, so you get
-unconstrained prose where you expected JSON. Use `:chat_completions` for
-structured output.
+Streaming, multi-turn conversations and client-side tools all work; the live
+specs in `spec/ruby_llm/chat_responses_spec.rb` cover them.
+
+**`with_schema` does not work here** — LM Studio ignores the schema on this
+endpoint and nothing raises, so you get unconstrained prose where you expected
+JSON. Use `:chat_completions` for structured output.
+
+`with_thinking` works here, reasoning text included. It needs this gem's own
+Responses subclass to do so: OpenAI never returns raw reasoning, only an
+optional summary, so RubyLLM's stock protocol reads a reasoning item's
+`summary`. LM Studio runs the model locally and has nothing to hide, so it
+returns the reasoning itself in `content` as `reasoning_text` (and streams it
+as `response.reasoning_text.delta`). The provider reads both shapes.
 
 ## Embeddings
 
 Embeddings go to `POST /v1/embeddings` regardless of which chat protocol is
-in effect:
+in effect — the provider routes them to the OpenAI-compatible endpoint itself,
+because that is the only place LM Studio serves them:
 
 ```ruby
 RubyLLM.embed('Hello world', model: 'text-embedding-nomic-embed-text-v1.5', provider: :lms)
@@ -255,15 +331,18 @@ response = chat.ask('Hello')
   continues from a `response_id` instead of replaying history. Ordinary
   RubyLLM multi-turn chats just work: each request sends only the new messages
   and points `previous_response_id` at the last stored response. The id is on
-  `response.raw.body['response_id']`.
+  `response.raw.body['response_id']`, and also on `response.raw_content`,
+  which RubyLLM persists — so a chat reloaded from the database (Rails
+  `acts_as_chat`) continues where it left off rather than refusing to replay.
 - **Performance stats** — `response.raw.body['stats']` carries tokens per
   second, time to first token, and token counts; `response.tokens` (input,
   output, thinking) is filled from it.
-- **Reasoning control** — `chat.with_thinking(effort: :low)` maps onto the
-  native `reasoning` setting (`off` / `low` / `medium` / `high` / `on`; models
-  accept a subset — gpt-oss takes efforts, most others just on/off). Reasoning
-  output comes back separated as `response.thinking.text`, streamed as
-  thinking chunks.
+- **Reasoning control** — `chat.with_thinking` maps onto the native
+  `reasoning` setting (`off` / `low` / `medium` / `high` / `xhigh` / `on`;
+  models accept a subset — gpt-oss takes efforts, most others just on/off).
+  RubyLLM's `:none` effort is translated to LM Studio's `off` on the way out.
+  Reasoning output comes back separated as `response.thinking.text`, streamed
+  as thinking chunks. See [Reasoning](#reasoning).
 - **Server-side MCP tools** — pass `with_provider_options(integrations: [...])`
   to have the server itself run MCP plugins from `mcp.json`
   (`{ id: 'mcp/playwright' }`) or ephemeral MCP servers declared in the
@@ -273,11 +352,21 @@ response = chat.ask('Hello')
 - **Opting out of storage** — `with_provider_options(store: false)` keeps the
   conversation off the server, at the cost of multi-turn continuity.
 
+- **Sampling settings** — `top_p`, `top_k`, `min_p` and `repeat_penalty` are
+  part of the native request schema, so `with_provider_options(top_k: 40)` and
+  friends work here too.
+
 Limitations: no client-side tools (`with_tools` raises — use
 `:chat_completions`, or MCP integrations), no structured output
 (`with_schema` raises), and image input only as `data_url` parts. Unknown
-request keys are rejected, so the LM Studio request extras (`ttl`,
-`draft_model`, …) don't apply here.
+request keys are rejected, so the request extras that are *not* in the native
+schema (`ttl`, `draft_model`) raise a `BadRequestError` here — unlike the
+sampling settings above, which the schema does accept.
+
+The endpoint reports no stop reason of its own. When a generation runs into
+the `max_output_tokens` the request asked for, the provider reports
+`finish_reason: :length` from the token counts rather than claiming the model
+stopped on its own.
 
 ## Model management
 
@@ -300,7 +389,9 @@ provider.download_model('qwen/qwen3-4b')  # fetch a new model onto disk
 
 `load_model` returns the `instance_id` that `unload_model` takes; loading a
 model that is already resident starts a second instance (`...:2`), so hold on
-to the id you were given. Note that `ttl` is not a load option on the native
+to the id you were given. For the same reason these calls are sent
+non-idempotent: RubyLLM retries a POST that times out, and a retried load of a
+large model would hold the weights in memory twice. Note that `ttl` is not a load option on the native
 API — set idle TTL per request through the OpenAI endpoints (see
 [LM Studio request extras](#lm-studio-request-extras)) or `lms load --ttl`.
 
@@ -323,11 +414,20 @@ up whatever the server knows:
 | Key | From | Example |
 | --- | --- | --- |
 | `publisher`, `arch`, `quantization`, `compatibility_type`, `state` | v0 and v1 | `"qwen"`, `"qwen35"`, `"Q4_K_M"`, `"gguf"`, `"loaded"` |
-| `display_name` | v1 | `"Qwen3 27B"` |
-| `params_string` | v1 | `"27B"` |
-| `size_bytes` | v1 | `17742039110` |
-| `reasoning_options` | v1 | `["off", "low", "medium", "xhigh", "on"]` |
+| `display_name`, `description` | v1 | `"Qwen3 27B"` |
+| `params_string`, `size_bytes`, `bits_per_weight` | v1 | `"27B"`, `17742039110`, `4` |
+| `variants`, `selected_variant` | v1 | the downloaded quantizations, and which one is selected |
+| `reasoning_options` | v1 | `[{type: "effort", values: ["none", "low", "medium", "xhigh"], default: "xhigh"}, {type: "toggle"}]` |
 | `loaded_context_length` | v1 | `8192` (the loaded instance's window, which can be smaller than `context_window`) |
+| `remaining_ttl_seconds` | v1 | `1050` — how long before an idle JIT-loaded instance evicts |
+
+`Model#capabilities` picks up `function_calling` and `tool_choice` from the
+model's tool-use training, `vision` from its vision flag, and `reasoning` from
+its reasoning options. `streaming` and `structured_output` hold for every chat
+model LM Studio serves: the server constrains generation with a grammar built
+from your schema, so structured output works even on weights with no tool
+training (whether the *values* are any good is a separate question — see the
+gpt-oss caveat in `spec/support/models.rb`).
 
 ## The packaged catalog (models.json)
 
@@ -414,12 +514,30 @@ refreshing the shipped sample, not something gem users run.
 
 The suite always runs the provider integration specs. The first local run
 calls the API and records VCR cassettes; CI only replays committed cassettes.
-A failing example deletes its cassette so the next local run tests the live
-API again.
+
+A failing example keeps its cassette, so a red suite stays red. To re-record
+against the live server — after a deliberate behavior change, or an LM Studio
+upgrade — run with `RERECORD=1`, which deletes the cassette of any example
+that fails so the next run records it fresh:
+
+```sh
+RERECORD=1 bundle exec rspec spec/ruby_llm/chat_spec.rb
+```
 
 After refreshing the catalog, put real model IDs from your machine into
-`spec/support/models.rb`. Keep only the operation matrices LM Studio supports
-(chat, tools, structured output, embeddings, native chat — where the reasoning
-matrix needs a model that emits reasoning items, such as gpt-oss). The
-portable contract specs are adapted from
+`spec/support/models.rb`. Keep only the operation matrices LM Studio supports;
+the ones that need a particular kind of model are commented there:
+
+| Matrix | Needs |
+| --- | --- |
+| `CHAT_MODELS`, `TOOL_MODELS` | anything LM Studio serves |
+| `TOOL_CHOICE_MODELS` | a model that obeys `tool_choice: "required"` (gpt-oss does not) |
+| `STRUCTURED_OUTPUT_MODELS` | a model that does not mangle `json_schema` values (gpt-oss does) |
+| `REASONING_MODELS` | a model whose listing reports reasoning options |
+| `REASONING_OFF_MODELS` | one of those that also reports LM Studio's `off` |
+| `VISION_MODELS` | a model flagged `vision: true` |
+| `EMBEDDING_MODELS` | an embedding model |
+| `NATIVE_CHAT_MODELS`, `NATIVE_REASONING_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+
+The portable contract specs are adapted from
 [RubyLLM's live specs](https://github.com/crmne/ruby_llm/tree/main/spec/ruby_llm).

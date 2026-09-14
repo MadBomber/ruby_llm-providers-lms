@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen/qwen3.8-27b","messages":[{"role":"user","content":[{"type":"text","text":"What
+        color fills this image? Answer with one word."},{"type":"image_url","image_url":{"url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAAQUlEQVR4nO3OQQ0AMBAEofNvupWx8yBBAPfuUvYDISEhoZj9QEhISChmPxASEhKK2Q+EhISEYvYDISEhoZj9oB763xP3eV+LAIgAAAAASUVORK5CYII="}}]}],"stream":false}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1257'
+      Etag:
+      - W/"4e9-jiX7AKNT0qtMwP5nreK3qEKf2J0"
+      Date:
+      - Mon, 14 Sep 2026 19:05:28 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC0yeTRxY2FudTlvYjA4bXAzeTFvNWxmYiIsCiAgIm9iamVjdCI6ICJjaGF0LmNvbXBsZXRpb24iLAogICJjcmVhdGVkIjogMTc4OTQxMjcxOCwKICAibW9kZWwiOiAicXdlbi9xd2VuMy44LTI3YiIsCiAgImNob2ljZXMiOiBbCiAgICB7CiAgICAgICJpbmRleCI6IDAsCiAgICAgICJtZXNzYWdlIjogewogICAgICAgICJyb2xlIjogImFzc2lzdGFudCIsCiAgICAgICAgImNvbnRlbnQiOiAiUmVkIiwKICAgICAgICAicmVhc29uaW5nX2NvbnRlbnQiOiAiVGhlIHVzZXIgd2FudHMgYSBvbmUtd29yZCBhbnN3ZXIgaWRlbnRpZnlpbmcgdGhlIGNvbG9yIGluIHRoZSBpbWFnZS4gVGhlIGltYWdlIGlzIGEgc29saWQgc3F1YXJlIG9mIHB1cmUgcmVkLiBObyBhbWJpZ3VpdHkgaGVyZeKAlG5vIGdyYWRpZW50cywgbm8gc2Vjb25kYXJ5IGh1ZXMsIG5vIHRleHQgb3Igc2hhcGVzLiBUaGUgaW5zdHJ1Y3Rpb24gaXMgZXhwbGljaXQ6IG9uZSB3b3JkLiBQb3NzaWJsZSBjYW5kaWRhdGVzOiBcIlJlZCxcIiBcInJlZCxcIiBcIkNyaW1zb24sXCIgXCJTY2FybGV0LlwiIFRoZSBpbWFnZSBpcyBhIGZsYXQsIHNhdHVyYXRlZCByZWQgKGFwcHJveGltYXRlbHkgUkdCIDI1NSwwLDApLCBzbyB0aGUgbW9zdCBhY2N1cmF0ZSBhbmQgc2ltcGxlc3Qgc2luZ2xlIHdvcmQgaXMgXCJSZWQuXCIgSSdsbCBwcm92aWRlIGp1c3QgdGhhdCB3b3JkLCBjYXBpdGFsaXplZCBhcyBhIHN0YW5kYWxvbmUgYW5zd2VyLCB3aXRoIG5vIGV4dHJhIGV4cGxhbmF0aW9uIHRvIGhvbm9yIHRoZSBvbmUtd29yZCBjb25zdHJhaW50LlxuIiwKICAgICAgICAidG9vbF9jYWxscyI6IFtdCiAgICAgIH0sCiAgICAgICJsb2dwcm9icyI6IG51bGwsCiAgICAgICJmaW5pc2hfcmVhc29uIjogInN0b3AiCiAgICB9CiAgXSwKICAidXNhZ2UiOiB7CiAgICAicHJvbXB0X3Rva2VucyI6IDc0LAogICAgImNvbXBsZXRpb25fdG9rZW5zIjogMTI3LAogICAgInRvdGFsX3Rva2VucyI6IDIwMSwKICAgICJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjogewogICAgICAicmVhc29uaW5nX3Rva2VucyI6IDEyMwogICAgfQogIH0sCiAgInN0YXRzIjogewogICAgInRvdGFsX2RyYWZ0X3Rva2Vuc19jb3VudCI6IDE1MywKICAgICJhY2NlcHRlZF9kcmFmdF90b2tlbnNfY291bnQiOiA3NSwKICAgICJyZWplY3RlZF9kcmFmdF90b2tlbnNfY291bnQiOiA3OAogIH0sCiAgInN5c3RlbV9maW5nZXJwcmludCI6ICJxd2VuL3F3ZW4zLjgtMjdiIgp9
+  recorded_at: Mon, 14 Sep 2026 19:05:28 GMT
+recorded_with: VCR 6.4.0

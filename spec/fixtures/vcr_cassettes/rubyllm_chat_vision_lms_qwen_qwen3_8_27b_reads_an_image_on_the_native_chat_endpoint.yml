@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen/qwen3.8-27b","input":[{"type":"text","content":"What
+        color fills this image? Answer with one word."},{"type":"image","data_url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAAQUlEQVR4nO3OQQ0AMBAEofNvupWx8yBBAPfuUvYDISEhoZj9QEhISChmPxASEhKK2Q+EhISEYvYDISEhoZj9oB763xP3eV+LAIgAAAAASUVORK5CYII="}],"stream":false,"reasoning":"off"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '392'
+      Etag:
+      - W/"188-ZlQ/tk62d9hCObvJt9qTLZPSbZM"
+      Date:
+      - Mon, 14 Sep 2026 19:05:18 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "model_instance_id": "qwen/qwen3.8-27b",
+          "output": [
+            {
+              "type": "message",
+              "content": "red"
+            }
+          ],
+          "stats": {
+            "input_tokens": 34,
+            "total_output_tokens": 2,
+            "reasoning_output_tokens": 0,
+            "tokens_per_second": 5.960043865922853,
+            "time_to_first_token_seconds": 1.193178
+          },
+          "response_id": "resp_66453320fca69423565a9b089889bd4e05ede6765875dabe"
+        }
+  recorded_at: Mon, 14 Sep 2026 19:05:18 GMT
+recorded_with: VCR 6.4.0

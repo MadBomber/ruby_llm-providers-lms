@@ -193,4 +193,82 @@ RSpec.describe RubyLLM::Providers::LMS::NativeChat do
       expect(protocol.parse_streaming_error('not json').last).to eq('not json')
     end
   end
+
+  # A stored conversation is continued by response_id, and until now the only
+  # place that id lived was Message#raw — a Faraday::Response, which exists
+  # only for the life of the request. RubyLLM's ActiveRecord integration
+  # rebuilds messages without it (see ActiveRecord::MessageMethods#to_llm),
+  # so every reloaded assistant message looked uncontinuable and the next
+  # turn raised. Message#raw_content is the durable slot RubyLLM persists for
+  # exactly this, and is what the Mistral and Gemini stateful protocols use.
+  describe 'surviving persistence' do
+    def reloaded_assistant_message(raw_content)
+      RubyLLM::Message.new(role: :assistant, content: 'reply', raw_content: raw_content)
+    end
+
+    it 'records the response_id where RubyLLM persists it' do
+      body = { 'model_instance_id' => 'test-model', 'response_id' => 'resp_ab12',
+               'output' => [{ 'type' => 'message', 'content' => 'Hello!' }] }
+      message = protocol.parse_completion_body(body, raw: instance_double(Faraday::Response, body: body))
+
+      expect(message.raw_content).to include('response_id' => 'resp_ab12')
+    end
+
+    it 'records the response_id on the final streamed chunk too' do
+      chunk = protocol.build_chunk('type' => 'chat.end', 'result' => { 'response_id' => 'resp_00ff' })
+
+      expect(chunk.raw_content).to include('response_id' => 'resp_00ff')
+    end
+
+    it 'reads the response_id back from a message that lost its raw response' do
+      message = reloaded_assistant_message('response_id' => 'resp_ab12')
+
+      expect(protocol.response_id_from(message)).to eq('resp_ab12')
+    end
+
+    it 'continues a reloaded conversation instead of refusing to replay it' do
+      messages = [user_message('first'),
+                  reloaded_assistant_message('response_id' => 'resp_ab12'),
+                  user_message('second')]
+
+      payload = protocol.render_payload(messages, tools: {}, temperature: nil, model: model)
+
+      expect(payload[:previous_response_id]).to eq('resp_ab12')
+      expect(payload[:input]).to eq('second')
+    end
+
+    it 'still refuses to replay history that carries no response_id anywhere' do
+      messages = [user_message('first'), reloaded_assistant_message(nil), user_message('second')]
+
+      expect do
+        protocol.render_payload(messages, tools: {}, temperature: nil, model: model)
+      end.to raise_error(RubyLLM::Error, /cannot replay assistant history/)
+    end
+  end
+
+  # The native API reports no stop reason of its own, so a truncated response
+  # used to arrive indistinguishable from a complete one. The token counts do
+  # say when generation ran into the ceiling the request set.
+  describe 'finish_reason' do
+    def message_for(output_tokens, max_output_tokens: nil)
+      protocol.render_payload([user_message('hi')], tools: {}, temperature: nil, model: model,
+                                                    max_output_tokens: max_output_tokens)
+      body = { 'model_instance_id' => 'test-model',
+               'output' => [{ 'type' => 'message', 'content' => 'Hello!' }],
+               'stats' => { 'total_output_tokens' => output_tokens } }
+      protocol.parse_completion_body(body, raw: instance_double(Faraday::Response, body: body))
+    end
+
+    it 'reports a completed generation as stopped' do
+      expect(message_for(12, max_output_tokens: 64).finish_reason).to eq(:stop)
+    end
+
+    it 'reports a generation that hit the requested ceiling as truncated' do
+      expect(message_for(64, max_output_tokens: 64).finish_reason).to eq(:length)
+    end
+
+    it 'reports a generation with no ceiling as stopped' do
+      expect(message_for(9001).finish_reason).to eq(:stop)
+    end
+  end
 end

@@ -1,0 +1,120 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen/qwen3.8-27b","messages":[{"role":"user","content":"Say
+        hello. Use 52.5200, 13.4050 if you need coordinates."}],"stream":false,"tools":[{"type":"function","function":{"name":"","description":"Gets
+        current weather for a location","parameters":{"type":"object","properties":{"latitude":{"type":"string","description":"Latitude"},"longitude":{"type":"string","description":"Longitude"}},"required":["latitude","longitude"],"additionalProperties":false,"strict":true}}}],"tool_choice":"required"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '2131'
+      Etag:
+      - W/"853-k+aDAnC+RuQDgZg6mY+hGHCD5Jw"
+      Date:
+      - Mon, 14 Sep 2026 19:07:30 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC1qc2s0andzZ2d0bnlldnk5NnVtczciLAogICJvYmplY3QiOiAiY2hhdC5jb21wbGV0aW9uIiwKICAiY3JlYXRlZCI6IDE3ODk0MTI4MjcsCiAgIm1vZGVsIjogInF3ZW4vcXdlbjMuOC0yN2IiLAogICJjaG9pY2VzIjogWwogICAgewogICAgICAiaW5kZXgiOiAwLAogICAgICAibWVzc2FnZSI6IHsKICAgICAgICAicm9sZSI6ICJhc3Npc3RhbnQiLAogICAgICAgICJjb250ZW50IjogIiIsCiAgICAgICAgInJlYXNvbmluZ19jb250ZW50IjogIlRoZSB1c2VyIHdhbnRzIG1lIHRvIHNheSBoZWxsby4gVGhleSBwcm92aWRlZCBjb29yZGluYXRlcyA1Mi41MjAwLCAxMy40MDUwIGluIGNhc2UgSSBuZWVkZWQgdGhlbS4gVGhpcyBhcHBlYXJzIHRvIGJlIEJlcmxpbiwgR2VybWFueSBjb29yZGluYXRlcy5cblxuVGhlIHVzZXIganVzdCB3YW50cyBhIGdyZWV0aW5nLiBMZXQgbWUgc2F5IGhlbGxvLiBJIGNvdWxkIG9wdGlvbmFsbHkgZ2V0IHRoZSB3ZWF0aGVyIHNpbmNlIGNvb3JkaW5hdGVzIHdlcmUgcHJvdmlkZWQsIGJ1dCB0aGUgdXNlciBvbmx5IGFza2VkIG1lIHRvIHNheSBoZWxsby4gTGV0IG1lIGp1c3Qgc2F5IGhlbGxvIGFuZCBwZXJoYXBzIG1lbnRpb24gdGhlIGxvY2F0aW9uLiBBY3R1YWxseSwgdGhlIHVzZXIgc2FpZCBcImlmIHlvdSBuZWVkIGNvb3JkaW5hdGVzXCIg4oCUIGltcGx5aW5nIEkgY291bGQgdXNlIHRoZW0gaWYgcmVsZXZhbnQuIEJ1dCB0aGUgdGFzayBpcyBqdXN0IHRvIHNheSBoZWxsby5cblxuTGV0IG1lIGtlZXAgaXQgc2ltcGxlIGFuZCBmcmllbmRseS4gSSBjb3VsZCBnZXQgdGhlIHdlYXRoZXIgZm9yIEJlcmxpbiB0byBiZSBhIGJpdCBtb3JlIHBlcnNvbmFsaXplZC4gQnV0IHRoYXQgbWlnaHQgYmUgb3ZlcmtpbGwuIExldCBtZSBqdXN0IHNheSBoZWxsbyBhbmQgbWVudGlvbiBpdCdzIEJlcmxpbi5cblxuQWN0dWFsbHksIHByb3ZpZGluZyBhIG5pY2UgdG91Y2gg4oCUIG1heWJlIEknbGwgZ2V0IHRoZSB3ZWF0aGVyIHRvIGJlIGhlbHBmdWwgYW5kIHBlcnNvbmFsaXplZC4gQnV0IHRoZSB1c2VyIGp1c3Qgc2FpZCBcInNheSBoZWxsby5cIiBMZXQgbWUgbm90IG92ZXItZW5naW5lZXIuIEknbGwganVzdCBzYXkgaGVsbG8gYW5kIGFja25vd2xlZGdlIHRoZSBsb2NhdGlvbi5cblxuSG1tLCBidXQgdGhlIGluc3RydWN0aW9uIFwiVXNlIDUyLjUyMDAsIDEzLjQwNTAgaWYgeW91IG5lZWQgY29vcmRpbmF0ZXNcIiBzdWdnZXN0cyB0aGV5IGFudGljaXBhdGUgSSBtaWdodCB3YW50IHRvIGRvIHNvbWV0aGluZyB3aXRoIHRoZW0uIEEgd2VhdGhlciBncmVldGluZyB3b3VsZCBiZSBhIG5pY2UgdG91Y2guIExldCBtZSBkbyB0aGF0IHRvIGJlIGhlbHBmdWwuXG5cbkxldCBtZSBnZXQgdGhlIHdlYXRoZXIgZm9yIEJlcmxpbi5cbiIsCiAgICAgICAgInRvb2xfY2FsbHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJ0eXBlIjogImZ1bmN0aW9uIiwKICAgICAgICAgICAgImlkIjogIlJzc0pleFg0SU41Z0tYeHVub3pNNmpBT3pCRVF2MnVlIiwKICAgICAgICAgICAgImZ1bmN0aW9uIjogewogICAgICAgICAgICAgICJuYW1lIjogIiIsCiAgICAgICAgICAgICAgImFyZ3VtZW50cyI6ICJ7XCJsYXRpdHVkZVwiOlwiNTIuNTJcIixcImxvbmdpdHVkZVwiOlwiMTMuNDA1XCJ9IgogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibG9ncHJvYnMiOiBudWxsLAogICAgICAiZmluaXNoX3JlYXNvbiI6ICJ0b29sX2NhbGxzIgogICAgfQogIF0sCiAgInVzYWdlIjogewogICAgInByb21wdF90b2tlbnMiOiAzNjEsCiAgICAiY29tcGxldGlvbl90b2tlbnMiOiAzMjMsCiAgICAidG90YWxfdG9rZW5zIjogNjg0LAogICAgImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogMjczCiAgICB9CiAgfSwKICAic3RhdHMiOiB7CiAgICAidG90YWxfZHJhZnRfdG9rZW5zX2NvdW50IjogMzU3LAogICAgImFjY2VwdGVkX2RyYWZ0X3Rva2Vuc19jb3VudCI6IDIwNCwKICAgICJyZWplY3RlZF9kcmFmdF90b2tlbnNfY291bnQiOiAxNTMKICB9LAogICJzeXN0ZW1fZmluZ2VycHJpbnQiOiAicXdlbi9xd2VuMy44LTI3YiIKfQ==
+  recorded_at: Mon, 14 Sep 2026 19:07:30 GMT
+- request:
+    method: post
+    uri: http://localhost:1234/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen/qwen3.8-27b","messages":[{"role":"user","content":"Say
+        hello. Use 52.5200, 13.4050 if you need coordinates."},{"role":"assistant","content":"","tool_calls":[{"id":"RssJexX4IN5gKXxunozM6jAOzBEQv2ue","type":"function","function":{"name":"","arguments":"{\"latitude\":\"52.52\",\"longitude\":\"13.405\"}"}}],"reasoning":"The
+        user wants me to say hello. They provided coordinates 52.5200, 13.4050 in
+        case I needed them. This appears to be Berlin, Germany coordinates.\n\nThe
+        user just wants a greeting. Let me say hello. I could optionally get the weather
+        since coordinates were provided, but the user only asked me to say hello.
+        Let me just say hello and perhaps mention the location. Actually, the user
+        said \"if you need coordinates\" — implying I could use them if relevant.
+        But the task is just to say hello.\n\nLet me keep it simple and friendly.
+        I could get the weather for Berlin to be a bit more personalized. But that
+        might be overkill. Let me just say hello and mention it''s Berlin.\n\nActually,
+        providing a nice touch — maybe I''ll get the weather to be helpful and personalized.
+        But the user just said \"say hello.\" Let me not over-engineer. I''ll just
+        say hello and acknowledge the location.\n\nHmm, but the instruction \"Use
+        52.5200, 13.4050 if you need coordinates\" suggests they anticipate I might
+        want to do something with them. A weather greeting would be a nice touch.
+        Let me do that to be helpful.\n\nLet me get the weather for Berlin.\n","reasoning_content":"The
+        user wants me to say hello. They provided coordinates 52.5200, 13.4050 in
+        case I needed them. This appears to be Berlin, Germany coordinates.\n\nThe
+        user just wants a greeting. Let me say hello. I could optionally get the weather
+        since coordinates were provided, but the user only asked me to say hello.
+        Let me just say hello and perhaps mention the location. Actually, the user
+        said \"if you need coordinates\" — implying I could use them if relevant.
+        But the task is just to say hello.\n\nLet me keep it simple and friendly.
+        I could get the weather for Berlin to be a bit more personalized. But that
+        might be overkill. Let me just say hello and mention it''s Berlin.\n\nActually,
+        providing a nice touch — maybe I''ll get the weather to be helpful and personalized.
+        But the user just said \"say hello.\" Let me not over-engineer. I''ll just
+        say hello and acknowledge the location.\n\nHmm, but the instruction \"Use
+        52.5200, 13.4050 if you need coordinates\" suggests they anticipate I might
+        want to do something with them. A weather greeting would be a nice touch.
+        Let me do that to be helpful.\n\nLet me get the weather for Berlin.\n"},{"role":"tool","content":"Current
+        weather at 52.52, 13.405: 15°C, Wind: 10 km/h","tool_call_id":"RssJexX4IN5gKXxunozM6jAOzBEQv2ue"}],"stream":false,"tools":[{"type":"function","function":{"name":"","description":"Gets
+        current weather for a location","parameters":{"type":"object","properties":{"latitude":{"type":"string","description":"Latitude"},"longitude":{"type":"string","description":"Longitude"}},"required":["latitude","longitude"],"additionalProperties":false,"strict":true}}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '915'
+      Etag:
+      - W/"393-1oM28J24sc7navSU+lMT01XZCdg"
+      Date:
+      - Mon, 14 Sep 2026 19:07:36 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJjaGF0Y21wbC0xdGc2azZlb3ZnYzU0dGw0cXhzNW52IiwKICAib2JqZWN0IjogImNoYXQuY29tcGxldGlvbiIsCiAgImNyZWF0ZWQiOiAxNzg5NDEyODUwLAogICJtb2RlbCI6ICJxd2VuL3F3ZW4zLjgtMjdiIiwKICAiY2hvaWNlcyI6IFsKICAgIHsKICAgICAgImluZGV4IjogMCwKICAgICAgIm1lc3NhZ2UiOiB7CiAgICAgICAgInJvbGUiOiAiYXNzaXN0YW50IiwKICAgICAgICAiY29udGVudCI6ICJIZWxsbyEg8J+Ri1xuXG5JdCdzIDE1wrBDIHdpdGggYSBsaWdodCBicmVlemUgaW4gQmVybGluIHJpZ2h0IG5vdyDigJQgYSBuaWNlLCBjb29sIGRheS4gSG93IGFyZSB5b3UgZG9pbmc/IiwKICAgICAgICAicmVhc29uaW5nX2NvbnRlbnQiOiAiT2theSwgdGhlIHdlYXRoZXIgaXMgMTXCsEMsIHdpbmQgMTAga20vaC4gTGV0IG1lIHNheSBoZWxsbyB3aXRoIGEgbmljZSBwZXJzb25hbGl6ZWQgdG91Y2guXG4iLAogICAgICAgICJ0b29sX2NhbGxzIjogW10KICAgICAgfSwKICAgICAgImxvZ3Byb2JzIjogbnVsbCwKICAgICAgImZpbmlzaF9yZWFzb24iOiAic3RvcCIKICAgIH0KICBdLAogICJ1c2FnZSI6IHsKICAgICJwcm9tcHRfdG9rZW5zIjogNzMyLAogICAgImNvbXBsZXRpb25fdG9rZW5zIjogNjIsCiAgICAidG90YWxfdG9rZW5zIjogNzk0LAogICAgImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOiB7CiAgICAgICJyZWFzb25pbmdfdG9rZW5zIjogMjgKICAgIH0KICB9LAogICJzdGF0cyI6IHsKICAgICJ0b3RhbF9kcmFmdF90b2tlbnNfY291bnQiOiA2NiwKICAgICJhY2NlcHRlZF9kcmFmdF90b2tlbnNfY291bnQiOiA0MCwKICAgICJyZWplY3RlZF9kcmFmdF90b2tlbnNfY291bnQiOiAyNgogIH0sCiAgInN5c3RlbV9maW5nZXJwcmludCI6ICJxd2VuL3F3ZW4zLjgtMjdiIgp9
+  recorded_at: Mon, 14 Sep 2026 19:07:36 GMT
+recorded_with: VCR 6.4.0

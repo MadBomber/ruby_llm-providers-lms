@@ -21,6 +21,11 @@ RSpec.configure do |config|
     cassette_path = File.join(VCR.configuration.cassette_library_dir, "#{cassette_name}.yml")
 
     VCR.use_cassette(cassette_name) { example.run }
-    FileUtils.rm_f(cassette_path) if example.exception
+
+    # Deleting the cassette on failure makes the next run re-record against
+    # the live server -- which means a genuine regression can never fail
+    # twice, because the second run quietly replaces the evidence. Keep that
+    # behind an explicit opt-in so a red suite stays red.
+    FileUtils.rm_f(cassette_path) if example.exception && ENV['RERECORD']
   end
 end

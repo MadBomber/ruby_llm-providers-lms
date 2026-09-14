@@ -12,19 +12,20 @@ module RubyLLM
       # rather than replaying role-tagged history. This protocol makes
       # RubyLLM's ordinary multi-turn Chat work on top of that: each
       # request sends only the messages newer than the last assistant
-      # response and points `previous_response_id` at it. The response's
-      # id, performance stats, and server-side tool calls all ride on
-      # `message.raw.body`.
+      # response and points `previous_response_id` at it. The id is kept on
+      # `message.raw_content`, which RubyLLM persists, so a conversation
+      # reloaded from the database continues rather than raising. Stats and
+      # server-side tool calls ride on `message.raw.body`.
       #
       # Native-only capabilities reach the request through
       # `with_provider_options`: `integrations:` (MCP plugins or ephemeral
-      # MCP servers the server runs itself), `context_length:`, and
-      # `store: false` (which trades multi-turn continuity for privacy).
+      # MCP servers the server runs itself), `context_length:`, the sampling
+      # settings the native schema accepts (`top_p`, `top_k`, `min_p`,
+      # `repeat_penalty`), and `store: false` (which trades multi-turn
+      # continuity for privacy).
       # Client-side RubyLLM tools and structured output are not part of
       # this wire format — the :chat_completions protocol serves those.
       class NativeChat < RubyLLM::Protocol
-        include LMS::Models
-        include RubyLLM::Protocols::ChatCompletions::Embeddings
         include NativeChat::Conversation
         include NativeChat::Streaming
 
@@ -41,6 +42,11 @@ module RubyLLM
                            schema: nil, thinking: nil, citations: false, caching: nil, tool_prefs: nil)
           ensure_supported!(tools: tools, schema: schema)
           previous_response_id, pending = split_conversation(messages.reject { |msg| msg.role == :system })
+
+          # Kept for parse_completion_body: the response reports no stop
+          # reason, so the ceiling the request asked for is the only way to
+          # recognize a truncated generation.
+          @max_output_tokens = max_output_tokens
 
           payload = { model: model.id, input: render_input(pending), stream: stream }
           system_prompt = system_prompt_from(messages)
@@ -67,20 +73,32 @@ module RubyLLM
             input_tokens: stats['input_tokens'],
             output_tokens: stats['total_output_tokens'],
             thinking_tokens: stats['reasoning_output_tokens'],
-            finish_reason: :stop,
+            finish_reason: finish_reason_for(stats),
             model: data['model_instance_id'],
+            raw_content: conversation_state(data),
             raw: raw
           )
         end
 
-        # Maps RubyLLM thinking options onto the native `reasoning` setting
-        # ('off' | 'low' | 'medium' | 'high' | 'on'; models accept a subset).
+        # Maps RubyLLM thinking options onto the native `reasoning` setting.
+        # The native endpoint's vocabulary is 'off' | 'low' | 'medium' |
+        # 'high' | 'xhigh' | 'on' (models accept a subset), where the
+        # registry — and so the OpenAI endpoint — spells off as 'none'.
         def resolve_reasoning(thinking)
           return nil unless thinking
           return 'off' if thinking.respond_to?(:disabled?) && thinking.disabled?
 
           effort = thinking.respond_to?(:effort) ? thinking.effort : nil
           effort ? effort.to_s : 'on'
+        end
+
+        # The native response carries no stop reason, so a generation that
+        # ran into the requested ceiling is only recognizable by its token
+        # count. Without this a truncated answer looked complete.
+        def finish_reason_for(stats)
+          return :stop unless @max_output_tokens
+
+          stats['total_output_tokens'].to_i >= @max_output_tokens ? :length : :stop
         end
 
         def ensure_supported!(tools:, schema:)
