@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","input":"What is 2 + 2? Answer with just
+        the number.","stream":false,"reasoning":"low"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '464'
+      Etag:
+      - W/"1d0-Rs4ss6jSCHQJDQ2mGTs5Ixgsfb0"
+      Date:
+      - Fri, 11 Sep 2026 20:07:28 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "model_instance_id": "openai/gpt-oss-20b",
+          "output": [
+            {
+              "type": "reasoning",
+              "content": "Just output 4."
+            },
+            {
+              "type": "message",
+              "content": "4"
+            }
+          ],
+          "stats": {
+            "input_tokens": 81,
+            "total_output_tokens": 16,
+            "reasoning_output_tokens": 5,
+            "tokens_per_second": 69.89366687674519,
+            "time_to_first_token_seconds": 0.313
+          },
+          "response_id": "resp_a7f35992ea2f912d47e18018cfb058c7b268a7387ac012ca"
+        }
+  recorded_at: Fri, 11 Sep 2026 20:07:28 GMT
+recorded_with: VCR 6.4.0

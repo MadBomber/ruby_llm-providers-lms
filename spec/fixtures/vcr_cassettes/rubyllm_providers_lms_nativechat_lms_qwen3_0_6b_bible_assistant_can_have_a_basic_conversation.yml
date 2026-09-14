@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","input":"What''s 2 + 2? Answer
+        with just the number.","stream":false,"reasoning":"off"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '409'
+      Etag:
+      - W/"199-uqlrpFOTCEudKsIeEDvh+dwwESE"
+      Date:
+      - Fri, 11 Sep 2026 20:07:32 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "model_instance_id": "qwen3-0.6b-bible-assistant",
+          "output": [
+            {
+              "type": "message",
+              "content": "Answer: 4"
+            }
+          ],
+          "stats": {
+            "input_tokens": 26,
+            "total_output_tokens": 5,
+            "reasoning_output_tokens": 0,
+            "tokens_per_second": 177.92011386887287,
+            "time_to_first_token_seconds": 0.019431
+          },
+          "response_id": "resp_564aa2482925a3a2f7b41cae68206eb3d7d1a436dd26f3df"
+        }
+  recorded_at: Fri, 11 Sep 2026 20:07:32 GMT
+recorded_with: VCR 6.4.0

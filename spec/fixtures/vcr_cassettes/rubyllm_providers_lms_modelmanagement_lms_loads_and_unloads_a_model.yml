@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/models/load
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '120'
+      Etag:
+      - W/"78-H3wMxposAgumSPi6UCJh9i4/hJc"
+      Date:
+      - Fri, 11 Sep 2026 20:07:29 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "type": "llm",
+          "instance_id": "qwen3-0.6b-bible-assistant:2",
+          "load_time_seconds": 0.519,
+          "status": "loaded"
+        }
+  recorded_at: Fri, 11 Sep 2026 20:07:29 GMT
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/models/unload
+    body:
+      encoding: UTF-8
+      string: '{"instance_id":"qwen3-0.6b-bible-assistant:2"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '51'
+      Etag:
+      - W/"33-qdCK8aFSONUT0Ui+lbeWtOEalcQ"
+      Date:
+      - Fri, 11 Sep 2026 20:07:29 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "instance_id": "qwen3-0.6b-bible-assistant:2"
+        }
+  recorded_at: Fri, 11 Sep 2026 20:07:29 GMT
+recorded_with: VCR 6.4.0

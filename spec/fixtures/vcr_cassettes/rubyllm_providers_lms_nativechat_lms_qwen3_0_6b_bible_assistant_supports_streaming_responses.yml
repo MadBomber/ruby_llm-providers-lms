@@ -1,0 +1,372 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/api/v1/chat
+    body:
+      encoding: UTF-8
+      string: '{"model":"qwen3-0.6b-bible-assistant","input":"Count from 1 to 3","stream":true,"reasoning":"off"}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - text/event-stream
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 11 Sep 2026 20:07:47 GMT
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |+
+        event: chat.start
+        data: {"type":"chat.start","model_instance_id":"qwen3-0.6b-bible-assistant"}
+
+        event: prompt_processing.start
+        data: {"type":"prompt_processing.start"}
+
+        event: prompt_processing.progress
+        data: {"type":"prompt_processing.progress","progress":0}
+
+        event: prompt_processing.progress
+        data: {"type":"prompt_processing.progress","progress":1}
+
+        event: prompt_processing.end
+        data: {"type":"prompt_processing.end"}
+
+        event: message.start
+        data: {"type":"message.start"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"{\""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"issue"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"_question"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"\":"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"The"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" user"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" is"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" asking"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" for"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" guidance"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" about"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" counting"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" from"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" "}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"1"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" to"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" "}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"3"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":".\","}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"verse"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"\":"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"Matthew"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" "}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"2"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"8"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":":"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"2"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"0"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" -"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" '"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"He"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" who"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" count"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"eth"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" ("}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"and"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" counts"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":")"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" does"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" not"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" sin"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":";"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" he"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" who"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" is"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" counted"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" does"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" not"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" add"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" to"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" sin"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":".'"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"\","}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"ex"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"planation"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"\":"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"This"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" verse"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" emphasizes"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" that"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" God"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" sees"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" and"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" counts"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" all"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" things"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"."}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" It"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" reass"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"ures"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" you"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" that"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" counting"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" accurately"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" reflects"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" your"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" relationship"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" with"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" Him"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":","}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" avoiding"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" false"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" pride"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" or"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" careless"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" behavior"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":".\","}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"guid"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"ance"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"\":"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" [],"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"note"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"\":"}
+
+        event: message.delta
+        data: {"type":"message.delta","content":" \"\""}
+
+        event: message.delta
+        data: {"type":"message.delta","content":"}"}
+
+        event: message.end
+        data: {"type":"message.end"}
+
+        event: chat.end
+        data: {"type":"chat.end","result":{"model_instance_id":"qwen3-0.6b-bible-assistant","output":[{"type":"message","content":"{\"issue_question\": \"The user is asking for guidance about counting from 1 to 3.\", \"verse\": \"Matthew 28:20 - 'He who counteth (and counts) does not sin; he who is counted does not add to sin.'\", \"explanation\": \"This verse emphasizes that God sees and counts all things. It reassures you that counting accurately reflects your relationship with Him, avoiding false pride or careless behavior.\", \"guidance\": [], \"note\": \"\"}"}],"stats":{"input_tokens":19,"total_output_tokens":103,"reasoning_output_tokens":0,"tokens_per_second":239.68530729066313,"time_to_first_token_seconds":0.034809},"response_id":"resp_24fccdd668d57b6a01e87a31fb6817d47ff762015eb2166c"}}
+
+  recorded_at: Fri, 11 Sep 2026 20:07:48 GMT
+recorded_with: VCR 6.4.0
+...
