@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":[{"type":"text","text":"What''s
+        2 + 2?"}]}],"stream":false,"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '359'
+      Etag:
+      - W/"167-mDrmtad6m6pSZP072z4o18a8rjI"
+      Date:
+      - Mon, 14 Sep 2026 15:35:39 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJtc2dfZnN3OWE3bzFhbWNxd3NoNTZqb3N3ayIsCiAgInR5cGUiOiAibWVzc2FnZSIsCiAgInJvbGUiOiAiYXNzaXN0YW50IiwKICAiY29udGVudCI6IFsKICAgIHsKICAgICAgInR5cGUiOiAidGV4dCIsCiAgICAgICJ0ZXh0IjogIjLigK8r4oCvMuKArz3igK80IgogICAgfQogIF0sCiAgIm1vZGVsIjogIm9wZW5haS9ncHQtb3NzLTIwYiIsCiAgInN0b3BfcmVhc29uIjogImVuZF90dXJuIiwKICAic3RvcF9zZXF1ZW5jZSI6IG51bGwsCiAgInVzYWdlIjogewogICAgImlucHV0X3Rva2VucyI6IDc0LAogICAgIm91dHB1dF90b2tlbnMiOiAyNCwKICAgICJjYWNoZV9yZWFkX2lucHV0X3Rva2VucyI6IDAKICB9Cn0=
+  recorded_at: Mon, 14 Sep 2026 15:35:39 GMT
+recorded_with: VCR 6.4.0

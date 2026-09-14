@@ -3,14 +3,17 @@
 
 # Protocol switching: LM Studio serves both the Chat Completions API
 # (/v1/chat/completions, the default) and the newer Responses API
-# (/v1/responses). The LMS provider declares both, so one config line
-# flips every chat to the Responses dialect.
+# (/v1/responses). The LMS provider declares both, so one line flips a
+# chat to the Responses dialect.
+#
+# Streaming and client-side tools work here. `with_schema` does NOT —
+# LM Studio ignores the schema on this endpoint and nothing raises, so
+# you get prose where you expected JSON. See examples/15 for the same
+# question asked of every protocol.
 #
 #   ruby examples/07_responses_protocol.rb
 
 require_relative 'common'
-
-RubyLLM.configure { |config| config.lms_protocol = :responses }
 
 puts <<~INTRO
   == Responses protocol (#{MODEL}) ==
@@ -18,7 +21,7 @@ puts <<~INTRO
 
 INTRO
 
-response = new_chat.ask('In one sentence, what is the OpenAI Responses API?')
+response = new_chat(protocol: :responses).ask('In one sentence, what is the OpenAI Responses API?')
 
 puts response.content
 puts

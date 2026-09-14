@@ -15,8 +15,12 @@ ruby examples/run_all.rb
 
 `common.rb` holds the shared setup: it configures RubyLLM from the
 environment (a `.env` file is honored) and defines the default model.
-Override with `LMS_API_BASE`, `LMS_API_KEY`, `LMS_MODEL`, or
-`LMS_EMBEDDING_MODEL`.
+Override with `LMS_API_BASE`, `LMS_API_KEY`, `LMS_MODEL`,
+`LMS_EMBEDDING_MODEL`, or `LMS_REASONING_MODEL` (used by `13`).
+
+`new_chat(protocol: :anthropic)` returns a chat on any of the five
+protocols, scoped through a RubyLLM context so the rest of the demos keep
+the default.
 
 | Script | Shows |
 |---|---|
@@ -25,8 +29,13 @@ Override with `LMS_API_BASE`, `LMS_API_KEY`, `LMS_MODEL`, or
 | `03_tools.rb` | Function calling with a `RubyLLM::Tool` |
 | `04_structured_output.rb` | JSON Schema output via `with_schema` |
 | `05_embeddings.rb` | Local embeddings and cosine similarity |
-| `06_model_catalog.rb` | Live listing enriched from LM Studio's native API |
+| `06_model_catalog.rb` | Live listing enriched from LM Studio's native API (v1 preferred, v0 fallback) |
 | `07_responses_protocol.rb` | Switching to the `/v1/responses` dialect |
 | `08_connection_guard.rb` | Friendly `RubyLLM::Error` when the server is down |
 | `09_provider_options.rb` | LM Studio-only request fields (`ttl`, `top_k`, `min_p`, `repeat_penalty`, `draft_model`) via `with_provider_options` |
-| `10_provider_introspection.rb` | The provider's own methods: `local?`, `display_name`, config options, optional auth header |
+| `10_provider_introspection.rb` | The provider's own methods: `local?`, `display_name`, config options, registered protocols, optional auth header |
+| `11_native_stats.rb` | The `:native_v0` protocol: tokens/sec, time to first token and runtime via `/api/v0/chat/completions` |
+| `12_anthropic_protocol.rb` | The `:anthropic` protocol: Messages API at `/v1/messages`, with streaming, tools, and the `with_schema` trap |
+| `13_native_chat.rb` | The `:native_chat` protocol: server-stored conversations, reasoning control, and what it gives up |
+| `14_model_management.rb` | Listing, loading and unloading models over `/api/v1/models` |
+| `15_protocol_matrix.rb` | The same `with_schema` request through all five protocols — which honor it, which raise, which ignore it silently |

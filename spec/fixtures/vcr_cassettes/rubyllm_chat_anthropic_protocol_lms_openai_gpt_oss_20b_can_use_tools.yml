@@ -1,0 +1,113 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":[{"type":"text","text":"What''s
+        the weather in Berlin? Use 52.5200, 13.4050."}]}],"stream":false,"max_tokens":4096,"tools":[{"name":"","description":"Gets
+        current weather for a location","input_schema":{"type":"object","properties":{"latitude":{"type":"string","description":"Latitude"},"longitude":{"type":"string","description":"Longitude"}},"required":["latitude","longitude"],"additionalProperties":false,"strict":true}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '459'
+      Etag:
+      - W/"1cb-1aTCRYb5od+eOy+CqWas5l3+waw"
+      Date:
+      - Mon, 14 Sep 2026 15:35:36 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "msg_jq62kc9wm90kmeq1bd19m",
+          "type": "message",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "441070332",
+              "name": "",
+              "input": {
+                "latitude": "52.5200",
+                "longitude": "13.4050"
+              }
+            }
+          ],
+          "model": "openai/gpt-oss-20b",
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 146,
+            "output_tokens": 41,
+            "cache_read_input_tokens": 0
+          }
+        }
+  recorded_at: Mon, 14 Sep 2026 15:35:36 GMT
+- request:
+    method: post
+    uri: http://localhost:1234/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":[{"type":"text","text":"What''s
+        the weather in Berlin? Use 52.5200, 13.4050."}]},{"role":"assistant","content":[{"type":"tool_use","id":"441070332","name":"","input":{"latitude":"52.5200","longitude":"13.4050"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"441070332","content":[{"type":"text","text":"Current
+        weather at 52.5200, 13.4050: 15°C, Wind: 10 km/h"}]}]}],"stream":false,"max_tokens":4096,"tools":[{"name":"","description":"Gets
+        current weather for a location","input_schema":{"type":"object","properties":{"latitude":{"type":"string","description":"Latitude"},"longitude":{"type":"string","description":"Longitude"}},"required":["latitude","longitude"],"additionalProperties":false,"strict":true}}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '456'
+      Etag:
+      - W/"1c8-pmWunH9hb7FRdOyZ7Y633THhllU"
+      Date:
+      - Mon, 14 Sep 2026 15:35:37 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        ewogICJpZCI6ICJtc2dfa2hybTA3dzIzdDlheG1tNGlvMXJ4IiwKICAidHlwZSI6ICJtZXNzYWdlIiwKICAicm9sZSI6ICJhc3Npc3RhbnQiLAogICJjb250ZW50IjogWwogICAgewogICAgICAidHlwZSI6ICJ0ZXh0IiwKICAgICAgInRleHQiOiAiVGhlIGN1cnJlbnQgd2VhdGhlciBpbiBCZXJsaW4gKDUyLjUyMDDigK9OLCAxMy40MDUw4oCvRSkgaXMgKioxNeKAr8KwQyoqIHdpdGggYSB3aW5kIHNwZWVkIG9mIGFib3V0ICoqMTDigK9rbS9oKiouIgogICAgfQogIF0sCiAgIm1vZGVsIjogIm9wZW5haS9ncHQtb3NzLTIwYiIsCiAgInN0b3BfcmVhc29uIjogImVuZF90dXJuIiwKICAic3RvcF9zZXF1ZW5jZSI6IG51bGwsCiAgInVzYWdlIjogewogICAgImlucHV0X3Rva2VucyI6IDIxMywKICAgICJvdXRwdXRfdG9rZW5zIjogNTQsCiAgICAiY2FjaGVfcmVhZF9pbnB1dF90b2tlbnMiOiAwCiAgfQp9
+  recorded_at: Mon, 14 Sep 2026 15:35:37 GMT
+recorded_with: VCR 6.4.0

@@ -19,12 +19,35 @@ RSpec.describe RubyLLM::Providers::LMS do
     expect(described_class.protocols).to include(
       chat_completions: described_class::ChatCompletions,
       responses: RubyLLM::Protocols::Responses,
-      native_chat: described_class::NativeChat
+      native_chat: described_class::NativeChat,
+      native_v0: described_class::NativeChatCompletions,
+      anthropic: described_class::AnthropicMessages
     )
   end
 
   it 'keeps chat_completions as the default protocol' do
     expect(described_class.default_protocol).to eq(:chat_completions)
+  end
+
+  it 'defaults to the OpenAI-compatible chat endpoint' do
+    protocol = described_class::ChatCompletions.new(provider)
+    expect(protocol.completion_url).to eq('chat/completions')
+  end
+
+  it 'points the native_v0 protocol at the endpoint that reports stats' do
+    protocol = described_class::NativeChatCompletions.new(provider)
+    expect(protocol.completion_url).to eq('../api/v0/chat/completions')
+  end
+
+  # Streaming follows automatically: the protocol's stream_url delegates
+  # to completion_url. The live streaming cassette records /v1/messages.
+  it 'points the anthropic protocol at messages, relative to the /v1 base' do
+    protocol = described_class::AnthropicMessages.new(provider)
+    expect(protocol.completion_url).to eq('messages')
+  end
+
+  it 'lists models over the OpenAI-compatible endpoint on the anthropic protocol' do
+    expect(described_class::AnthropicMessages.new(provider).models_url).to eq('models')
   end
 
   it 'declares provider configuration' do
@@ -112,6 +135,84 @@ RSpec.describe RubyLLM::Providers::LMS do
       end
     end
 
+    describe '#normalize_v1_detail' do
+      let(:v1_model) do
+        {
+          'type' => 'llm',
+          'publisher' => 'qwen',
+          'key' => 'qwen/qwen3-27b',
+          'display_name' => 'Qwen3 27B',
+          'architecture' => 'qwen3',
+          'quantization' => { 'name' => 'Q4_K_M', 'bits_per_weight' => 4 },
+          'size_bytes' => 17_742_039_110,
+          'params_string' => '27B',
+          'max_context_length' => 262_144,
+          'format' => 'gguf',
+          'loaded_instances' => [{ 'id' => 'instance', 'config' => { 'context_length' => 8192 } }],
+          'capabilities' => {
+            'vision' => true,
+            'trained_for_tool_use' => true,
+            'reasoning' => { 'allowed_options' => %w[off on], 'default' => 'on' }
+          }
+        }
+      end
+
+      it 'rewrites a v1 entry into the v0 vocabulary and keeps the v1 extras' do
+        expect(protocol.normalize_v1_detail(v1_model)).to eq(
+          'type' => 'vlm',
+          'publisher' => 'qwen',
+          'arch' => 'qwen3',
+          'compatibility_type' => 'gguf',
+          'quantization' => 'Q4_K_M',
+          'state' => 'loaded',
+          'max_context_length' => 262_144,
+          'capabilities' => %w[vision tool_use],
+          'display_name' => 'Qwen3 27B',
+          'params_string' => '27B',
+          'size_bytes' => 17_742_039_110,
+          'reasoning_options' => %w[off on],
+          'loaded_context_length' => 8192
+        )
+      end
+
+      it 'reports a model with no loaded instance as not-loaded' do
+        detail = protocol.normalize_v1_detail(v1_model.merge('loaded_instances' => []))
+        expect(detail['state']).to eq('not-loaded')
+        expect(detail).not_to have_key('loaded_context_length')
+      end
+
+      it 'drops fields the entry does not carry' do
+        expect(protocol.normalize_v1_detail({ 'type' => 'llm' }))
+          .to eq('type' => 'llm', 'state' => 'not-loaded', 'capabilities' => [])
+      end
+    end
+
+    describe '#normalize_v1_type' do
+      it 'spells the v1 embedding type the way v0 does' do
+        expect(protocol.normalize_v1_type({ 'type' => 'embedding' }, {})).to eq('embeddings')
+      end
+
+      it 'turns the v1 vision capability into the v0 model type' do
+        expect(protocol.normalize_v1_type({ 'type' => 'llm' }, { 'vision' => true })).to eq('vlm')
+      end
+
+      it 'leaves a plain chat model alone' do
+        expect(protocol.normalize_v1_type({ 'type' => 'llm' }, {})).to eq('llm')
+      end
+    end
+
+    describe '#normalize_v1_capabilities' do
+      it 'turns the v1 capability flags into v0 capability names' do
+        expect(protocol.normalize_v1_capabilities('vision' => true, 'trained_for_tool_use' => true))
+          .to eq(%w[vision tool_use])
+      end
+
+      it 'omits flags that are false or absent' do
+        expect(protocol.normalize_v1_capabilities('vision' => false)).to eq([])
+        expect(protocol.normalize_v1_capabilities({})).to eq([])
+      end
+    end
+
     describe '#build_metadata' do
       it 'keeps native details and drops missing fields' do
         metadata = protocol.build_metadata({ 'owned_by' => 'organization_owner' }, llm_detail)
@@ -122,6 +223,20 @@ RSpec.describe RubyLLM::Providers::LMS do
           compatibility_type: 'gguf',
           quantization: 'Q4_K_M',
           state: 'loaded'
+        )
+      end
+
+      it 'carries the v1-only details through when the server reports them' do
+        metadata = protocol.build_metadata({}, 'display_name' => 'Qwen3 27B', 'params_string' => '27B',
+                                               'size_bytes' => 17_742_039_110,
+                                               'reasoning_options' => %w[off on],
+                                               'loaded_context_length' => 8192)
+        expect(metadata).to eq(
+          display_name: 'Qwen3 27B',
+          params_string: '27B',
+          size_bytes: 17_742_039_110,
+          reasoning_options: %w[off on],
+          loaded_context_length: 8192
         )
       end
 
@@ -152,6 +267,61 @@ RSpec.describe RubyLLM::Providers::LMS do
         model = protocol.parse_list_models_response(response, 'lms').first
         expect(model.family).to eq('lms')
         expect(model.capabilities).to eq(%w[streaming structured_output])
+      end
+
+      it 'names a model by its display name when the native listing reports one' do
+        response = instance_double(Faraday::Response, body: { 'data' => [{ 'id' => 'qwen/qwen3-27b' }] })
+        models = protocol.parse_list_models_response(
+          response, 'lms', details: { 'qwen/qwen3-27b' => { 'display_name' => 'Qwen3 27B' } }
+        )
+        expect(models.first.name).to eq('Qwen3 27B')
+      end
+
+      it 'falls back to the model id when there is no display name' do
+        response = instance_double(Faraday::Response, body: { 'data' => [{ 'id' => 'qwen/qwen3-27b' }] })
+        expect(protocol.parse_list_models_response(response, 'lms').first.name).to eq('qwen/qwen3-27b')
+      end
+    end
+
+    describe '#list_models native enrichment' do
+      def v1_listing
+        { 'models' => [{ 'key' => 'qwen/qwen3-27b', 'display_name' => 'Qwen3 27B', 'architecture' => 'qwen3' }] }
+      end
+
+      def v0_listing
+        { 'data' => [{ 'id' => 'qwen/qwen3-27b', 'arch' => 'qwen3-from-v0' }] }
+      end
+
+      def stub_native(path, status:, body: {})
+        stub_request(:get, "http://example.test:1234/api/#{path}/models")
+          .to_return(status: status, body: body.to_json, headers: { 'Content-Type' => 'application/json' })
+      end
+
+      before do
+        stub_request(:get, 'http://example.test:1234/v1/models')
+          .to_return(status: 200, body: { 'data' => [{ 'id' => 'qwen/qwen3-27b' }] }.to_json,
+                     headers: { 'Content-Type' => 'application/json' })
+      end
+
+      it 'prefers the richer v1 listing' do
+        stub_native('v1', status: 200, body: v1_listing)
+        model = protocol.list_models.first
+        expect(model.name).to eq('Qwen3 27B')
+        expect(model.family).to eq('qwen3')
+      end
+
+      it 'falls back to v0 on a server whose native API has no v1' do
+        stub_native('v1', status: 404)
+        stub_native('v0', status: 200, body: v0_listing)
+        expect(protocol.list_models.first.family).to eq('qwen3-from-v0')
+      end
+
+      it 'still lists models when neither native listing answers' do
+        stub_native('v1', status: 404)
+        stub_native('v0', status: 404)
+        model = protocol.list_models.first
+        expect(model.id).to eq('qwen/qwen3-27b')
+        expect(model.family).to eq('lms')
       end
     end
   end

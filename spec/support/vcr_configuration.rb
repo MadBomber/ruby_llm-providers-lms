@@ -16,6 +16,16 @@ VCR.configure do |config|
     base unless base.nil? || base == RubyLLM::Providers::LMS::DEFAULT_API_BASE
   end
 
+  # The native endpoints (../api/v0/...) resolve beside the /v1 base rather
+  # than under it, so the substitution above never sees them. Normalize the
+  # bare origin as well to keep those cassettes portable too.
+  default_origin = RubyLLM::Providers::LMS::DEFAULT_API_BASE.delete_suffix('/v1')
+  config.filter_sensitive_data(default_origin) do
+    base = ENV.fetch('LMS_API_BASE', nil)
+    origin = base && URI.parse(base).then { |uri| "#{uri.scheme}://#{uri.host}:#{uri.port}" }
+    origin unless origin.nil? || origin == default_origin
+  end
+
   config.before_record do |interaction|
     next unless interaction.request.headers['Authorization']
 

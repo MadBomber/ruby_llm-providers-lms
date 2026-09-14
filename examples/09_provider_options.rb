@@ -14,6 +14,9 @@
 #   min_p           discard tokens below this base probability
 #   repeat_penalty  penalize recently generated tokens
 #
+# These reach every protocol except :native_chat, whose server rejects
+# unknown request keys (see examples/13).
+#
 #   ruby examples/09_provider_options.rb
 
 require_relative 'common'
