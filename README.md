@@ -1,5 +1,39 @@
 # ruby_llm-providers-lms
 
+> [!WARNING]
+> **What a call does here depends on two choices, not one.** LM Studio serves
+> three different API protocols on a single port — OpenAI, Anthropic, and its
+> own native REST API — and runs whatever model you have downloaded behind all
+> of them. The protocol and the model each decide part of the outcome, and they
+> fail in different ways.
+>
+> **The protocol decides what is expressible.** `with_schema` is honored on
+> `:chat_completions` and `:native_v0` and silently ignored on `:responses` and
+> `:anthropic` — same model, same schema, prose where you expected JSON.
+> Reasoning is spelled `none`/`low`/`medium`/`high`/`xhigh` on the OpenAI
+> endpoints and `off`/`low`/`medium`/`high`/`xhigh`/`on` on the native one.
+> That much is consistent for every model, and this gem papers over what it can.
+>
+> **The model decides whether it honors what the protocol accepted**, and no
+> amount of provider code can fix that. LM Studio forwards
+> `tool_choice: "required"` for anything — qwen3 obeys it, gpt-oss ignores it.
+> It constrains generation with a grammar built from your schema, so every
+> model returns *structurally* valid JSON — and gpt-oss returns
+> `{"name":"analysis","age":0}`, which parses cleanly and means nothing.
+> Reasoning support varies per model: some take graded efforts, some only
+> on/off, and some cannot be turned off at all.
+>
+> This is the price of LM Studio's reach. It is all things to all models and
+> master of none, where a frontier lab's hosted model treats consistency as a
+> feature — one vendor, one protocol, one set of guarantees, held steady on
+> their side. Here the matrix is yours to own. Test against the models you
+> actually intend to ship on, rather than assuming a capability carries across
+> either axis.
+>
+> [Which protocol should you use?](#which-protocol-should-you-use) maps the
+> protocol axis. The model matrices in `spec/support/models.rb` record which
+> models were verified to honor what.
+
 [RubyLLM](https://rubyllm.com) provider gem for [LM Studio](https://lmstudio.ai) — run
 local models through LM Studio's local server (`lms server start`,
 `http://localhost:1234/v1` by default).
