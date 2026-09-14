@@ -35,6 +35,14 @@ end
 # local provider, RubyLLM assumes any model id exists — no registry
 # lookup, no assume_model_exists needed — and LM Studio just-in-time
 # loads the model if it isn't loaded yet.
-def new_chat(model: MODEL)
-  RubyLLM.chat(model:, provider: :lms)
+#
+# Pass +protocol:+ to speak one of the other dialects LM Studio serves
+# (:responses, :anthropic, :native_v0, :native_chat). It is scoped to the
+# returned chat through a RubyLLM context, so the global configuration —
+# and every other demo — keeps the default protocol.
+def new_chat(model: MODEL, protocol: nil)
+  return RubyLLM.chat(model:, provider: :lms) if protocol.nil?
+
+  RubyLLM.context { |config| config.lms_protocol = protocol }
+         .chat(model:, provider: :lms)
 end

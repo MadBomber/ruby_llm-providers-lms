@@ -5,11 +5,14 @@ module RubyLLM
     class LMS < Provider
       # Model-listing methods for the LM Studio API integration.
       # Enriches the OpenAI-compatible /v1/models listing with details from
-      # LM Studio's native REST API (/api/v0/models): model type, architecture,
-      # quantization, load state, and context length. The native endpoint is
-      # optional — when it is unavailable the plain listing still works.
+      # LM Studio's native REST API: model type, architecture, quantization,
+      # load state, and context length. Both native listings are optional —
+      # when neither answers the plain listing still works.
       module Models
-        NATIVE_MODELS_URL = '../api/v0/models'
+        include NativeV1
+
+        NATIVE_V1_MODELS_URL = '../api/v1/models'
+        NATIVE_V0_MODELS_URL = '../api/v0/models'
         CAPABILITY_MAP = {
           'tool_use' => 'function_calling',
           'vision' => 'vision'
@@ -33,7 +36,7 @@ module RubyLLM
             detail = details[model['id']] || {}
             Model.new(
               id: model['id'],
-              name: model['id'],
+              name: detail['display_name'] || model['id'],
               provider: slug,
               family: detail['arch'] || 'lms',
               created_at: model['created'] ? Time.at(model['created']) : nil,
@@ -70,7 +73,12 @@ module RubyLLM
             arch: detail['arch'],
             compatibility_type: detail['compatibility_type'],
             quantization: detail['quantization'],
-            state: detail['state']
+            state: detail['state'],
+            display_name: detail['display_name'],
+            params_string: detail['params_string'],
+            size_bytes: detail['size_bytes'],
+            reasoning_options: detail['reasoning_options'],
+            loaded_context_length: detail['loaded_context_length']
           }.compact
         end
 
@@ -84,11 +92,21 @@ module RubyLLM
 
         private
 
+        # LM Studio serves two native model listings. v1 is the richer one but
+        # only exists on newer releases; v0 is served by everything that has a
+        # native API at all. Try v1, fall back to v0, then give up quietly.
         def native_model_details
-          Array(@connection.get(NATIVE_MODELS_URL).body['data']).to_h { |detail| [detail['id'], detail] }
+          native_details(NATIVE_V1_MODELS_URL, 'models') { |model| normalize_v1_detail(model) } ||
+            native_details(NATIVE_V0_MODELS_URL, 'data') { |detail| detail } ||
+            {}
+        end
+
+        def native_details(url, key)
+          entries = Array(@connection.get(url).body[key])
+          entries.to_h { |entry| [entry['key'] || entry['id'], yield(entry)] }
         rescue Error, Faraday::Error => e
-          RubyLLM.logger.debug "LM Studio native model details unavailable (#{e.message})."
-          {}
+          RubyLLM.logger.debug "LM Studio native model details unavailable at #{url} (#{e.message})."
+          nil
         end
       end
     end

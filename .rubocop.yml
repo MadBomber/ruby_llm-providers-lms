@@ -27,3 +27,7 @@ RSpec/ExampleLength:
   Enabled: false
 RSpec/MultipleExpectations:
   Enabled: false
+# RubyLLM protocol seams (render_payload and friends) are keyword-heavy by
+# design; the signature must match the Protocol base class.
+Metrics/ParameterLists:
+  CountKeywordArgs: false

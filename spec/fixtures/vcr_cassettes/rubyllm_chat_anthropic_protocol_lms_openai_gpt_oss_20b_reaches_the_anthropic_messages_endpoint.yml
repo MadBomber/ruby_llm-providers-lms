@@ -1,0 +1,63 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":[{"type":"text","text":"What
+        is the capital of France?"}]}],"stream":false,"max_tokens":4096}'
+    headers:
+      User-Agent:
+      - Faraday v2.14.3
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '376'
+      Etag:
+      - W/"178-bu1sjzr0NucMr3XJ3wC8sxCtxxc"
+      Date:
+      - Mon, 14 Sep 2026 15:35:38 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "msg_40e0b1ry3gavypyma3klx",
+          "type": "message",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "The capital of France is **Paris**."
+            }
+          ],
+          "model": "openai/gpt-oss-20b",
+          "stop_reason": "end_turn",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 74,
+            "output_tokens": 23,
+            "cache_read_input_tokens": 0
+          }
+        }
+  recorded_at: Mon, 14 Sep 2026 15:35:38 GMT
+recorded_with: VCR 6.4.0
