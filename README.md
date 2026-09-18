@@ -526,7 +526,7 @@ models are resident right now.
 | --- | --- |
 | LM Studio (macOS) | 0.4.24+1 |
 | `lms` CLI | commit `ff50809` |
-| RubyLLM | 2.0.0.rc3 |
+| RubyLLM | 2.0.0 |
 
 This is the server the committed VCR cassettes were recorded from, and the
 version every endpoint and capability claim above was checked against. LM

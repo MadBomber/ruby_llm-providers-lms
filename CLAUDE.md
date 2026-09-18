@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 RubyLLM provider gem for LM Studio (`ruby_llm-providers-lms`). It registers a
 `:lms` provider that talks to LM Studio's local OpenAI-compatible server
 (`lms server start`, default `http://localhost:1234/v1`). No API key or
-configuration required. Requires Ruby >= 3.3; depends on `ruby_llm >= 2.0.0.rc1`.
+configuration required. Requires Ruby >= 3.3; depends on `ruby_llm >= 2.0.0`.
 
 ## Commands
 

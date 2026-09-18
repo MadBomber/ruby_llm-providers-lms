@@ -32,5 +32,5 @@ Gem::Specification.new do |spec|
                %w[CHANGELOG.md LICENSE README.md]
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'ruby_llm', '>= 2.0.0.rc1'
+  spec.add_dependency 'ruby_llm', '>= 2.0.0'
 end
