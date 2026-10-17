@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     requires.
 - Live specs and cassettes for judgments with Kev 0.8B, D1 Omni 600M and Clef
   Flash, over both endpoints, including image input.
+- Examples 16-20, on open-source decision models: the three question types, a
+  reusable `RubyLLM::Judge` subclass, a sweep of every decision model over both
+  endpoints, image judgments, and a decision model screening an inbox ahead of
+  a chat model. `examples/common.rb` gains `DECISION_MODEL`
+  (`LMS_DECISION_MODEL`, default `d1-omni-600m`) and `judgment_context`.
 - `lms_judgment_protocol` configuration option to choose between the two
   endpoints (`:decisions` by default). Judgments go to a decision endpoint
   whatever `lms_protocol` selects.

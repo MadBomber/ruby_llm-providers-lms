@@ -16,11 +16,25 @@ ruby examples/run_all.rb
 `common.rb` holds the shared setup: it configures RubyLLM from the
 environment (a `.env` file is honored) and defines the default model.
 Override with `LMS_API_BASE`, `LMS_API_KEY`, `LMS_MODEL`,
-`LMS_EMBEDDING_MODEL`, or `LMS_REASONING_MODEL` (used by `13`).
+`LMS_EMBEDDING_MODEL`, `LMS_REASONING_MODEL` (used by `13`), or
+`LMS_DECISION_MODEL` (used by `16`-`20`).
 
 `new_chat(protocol: :anthropic)` returns a chat on any of the five
 protocols, scoped through a RubyLLM context so the rest of the demos keep
 the default.
+
+`judgment_context(:system_one)` does the same for judgments, choosing which
+of LM Studio's two decision endpoints (`:decisions` or `:system_one`) they go to.
+
+The judgment demos (`16`-`20`) need a **decision model**: one LM Studio
+lists with `type: "decision"`. These open models work (download one with
+`lms get <URL>`):
+
+| Model | Hugging Face | Size | Images |
+|---|---|---|---|
+| D1 Omni 600M (the default) | [LiquidAI/d1-omni-600M-GGUF](https://huggingface.co/LiquidAI/d1-omni-600M-GGUF) | 0.8 GB | yes |
+| Kev 0.8B | [ggml-org/Kev-0.8B-GGUF](https://huggingface.co/ggml-org/Kev-0.8B-GGUF) | 0.8 GB | no |
+| Clef Flash | [ggml-org/Clef-Flash-GGUF](https://huggingface.co/ggml-org/Clef-Flash-GGUF) | 7.4 GB | yes |
 
 | Script | Shows |
 |---|---|
@@ -39,3 +53,8 @@ the default.
 | `13_native_chat.rb` | The `:native_chat` protocol: server-stored conversations, reasoning control, and what it gives up |
 | `14_model_management.rb` | Listing, loading and unloading models over `/api/v1/models` |
 | `15_protocol_matrix.rb` | The same `with_schema` request through all five protocols — which honor it, which raise, which ignore it silently |
+| `16_judgments.rb` | `RubyLLM.judge` with all three question types (probability, choice, score) and everything a judgment returns |
+| `17_judge_class.rb` | A reusable `RubyLLM::Judge` subclass with a runtime input, triaging and routing a support inbox |
+| `18_decision_models.rb` | Every decision model you have, over both endpoints, with timings; where the endpoints differ; a chat model refused |
+| `19_judging_images.rb` | Image judgments on vision decision models, over both endpoints |
+| `20_judge_then_chat.rb` | A decision model screening an inbox in milliseconds so the chat model only drafts the replies that matter |
