@@ -27,7 +27,7 @@ pre-commit hooks, so the full suite must pass before any commit lands.
 
 ## Architecture
 
-Three source files under `lib/`:
+Key source files under `lib/`:
 
 - `lib/ruby_llm/providers/lms.rb` — `RubyLLM::Providers::LMS < Provider`.
   Declares two protocols: `:chat_completions` (a subclass of
@@ -50,6 +50,19 @@ Three source files under `lib/`:
   architecture/family, quantization, load state, context length, and
   tool/vision capabilities. The native endpoint is optional — enrichment
   degrades to `{}` when it's unavailable.
+- `lib/ruby_llm/providers/lms/decisions.rb` and `system_one.rb` — judgment
+  protocols for LM Studio decision models (RubyLLM 2.1's `RubyLLM::Judge` /
+  `RubyLLM.judge`). `:decisions` (`POST /v1/decisions`, the default) subclasses
+  `Protocols::OpenAI::Decisions` and matches answers to questions by name;
+  `:system_one` (`POST /v1/systemone`) subclasses `Protocols::SystemOne` with
+  the path fixed for an api_base that already ends in `/v1`, and sends images
+  in a top-level `images` array (verified live: a `state` content array is
+  accepted but its images are ignored). The provider's
+  private `resolve_protocol` sends `operation: :judge` to
+  `lms_judgment_protocol` regardless of `lms_protocol`, the same way `embed`
+  always goes to `:chat_completions`. Decision models must be ones LM Studio
+  itself tags `type: "decision"`; a same-named MLX/GGUF conversion loads as a
+  plain LLM and both endpoints reject it.
 
 `models.json` at the gem root is a packaged fallback catalog that RubyLLM loads
 when the provider is registered. It is machine-specific (LM Studio only lists

@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/systemone
+    body:
+      encoding: UTF-8
+      string: '{"model":"kev-0.8b","state":"I was charged twice and I am furious.
+        Refund the duplicate charge today!","questions":{"urgent":{"type":"noul","instructions":"Does
+        this need attention today?"},"department":{"type":"choice","instructions":"Which
+        team should handle this?","criteria":{"billing":"Payments and refunds","technical":"Bugs
+        and integrations","other":"Everything else"}},"frustration":{"type":"score","instructions":"How
+        frustrated is the customer?","criteria":["Calm","Frustrated","Angry"]}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.15.0
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '549'
+      Etag:
+      - W/"225-HLX0nY8I4nQYgohQ9zJEYPHMAqY"
+      Date:
+      - Sat, 17 Oct 2026 22:45:37 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: '{"model":"kev-0.8b","answers":{"urgent":{"type":"noul","noul":0.7586812058490744},"department":{"type":"choice","choice":"billing","probabilities":{"billing":0.6621414041736292,"technical":0.03245774059968036,"other":0.3054008552266904},"confidence":0.4932121062604438},"frustration":{"type":"score","score":1.6332240785593555,"legend":{"0":"Calm","1":"Frustrated","2":"Angry"},"probabilities":{"0":0.010964541895497872,"1":0.34484683764964896,"2":0.6441886204548533},"confidence":0.4498361178390329}},"usage":{"input_tokens":116,"output_tokens":0}}'
+  recorded_at: Sat, 17 Oct 2026 22:45:37 GMT
+recorded_with: VCR 6.4.0

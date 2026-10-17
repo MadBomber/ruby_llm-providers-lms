@@ -21,7 +21,9 @@ RSpec.describe RubyLLM::Providers::LMS do
       responses: described_class::Responses,
       native_chat: described_class::NativeChat,
       native_v0: described_class::NativeChatCompletions,
-      anthropic: described_class::AnthropicMessages
+      anthropic: described_class::AnthropicMessages,
+      decisions: described_class::Decisions,
+      system_one: described_class::SystemOne
     )
   end
 
@@ -78,7 +80,7 @@ RSpec.describe RubyLLM::Providers::LMS do
   end
 
   it 'declares provider configuration' do
-    expect(described_class.configuration_options).to eq(%i[lms_api_base lms_api_key])
+    expect(described_class.configuration_options).to eq(%i[lms_api_base lms_api_key lms_judgment_protocol])
     expect(described_class.configuration_requirements).to eq([])
   end
 
@@ -129,6 +131,10 @@ RSpec.describe RubyLLM::Providers::LMS do
     let(:vlm_detail) { { 'type' => 'vlm', 'arch' => 'qwen2_vl' } }
     let(:embedding_detail) { { 'type' => 'embeddings', 'arch' => 'nomic-bert' } }
 
+    def decision_detail(**extra)
+      { 'type' => 'decision', 'arch' => 'gemma3' }.merge(extra.transform_keys(&:to_s))
+    end
+
     describe '#build_modalities' do
       it 'maps chat models to text in and out' do
         expect(protocol.build_modalities(llm_detail)).to eq(input: %w[text], output: %w[text])
@@ -141,9 +147,22 @@ RSpec.describe RubyLLM::Providers::LMS do
       it 'maps embedding models to embedding output' do
         expect(protocol.build_modalities(embedding_detail)).to eq(input: %w[text], output: %w[embeddings])
       end
+
+      it 'maps decision models to judgment output' do
+        expect(protocol.build_modalities(decision_detail)).to eq(input: %w[text], output: %w[judgment])
+      end
+
+      it 'adds image input for a decision model with a vision adapter' do
+        expect(protocol.build_modalities(decision_detail(has_vision_adapter: true)))
+          .to eq(input: %w[text image], output: %w[judgment])
+      end
     end
 
     describe '#build_capabilities' do
+      it 'gives decision models judgment alone, none of the chat capabilities' do
+        expect(protocol.build_capabilities(decision_detail)).to eq(%w[judgment])
+      end
+
       it 'derives function calling and tool choice from reported tool_use' do
         expect(protocol.build_capabilities(llm_detail))
           .to eq(%w[streaming structured_output function_calling tool_choice])

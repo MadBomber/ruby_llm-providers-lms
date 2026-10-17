@@ -28,7 +28,9 @@ RSpec.describe RubyLLM::Providers::LMS::NativeChat, :live do
 
       second = chat.ask('What is my name? Answer with just the name.')
       expect(second.content).to include('Dewayne')
-      expect(second.raw.env.request_body).to include(first.raw.body['response_id'])
+      # RubyLLM >= 2.1 releases the request body, so ask WebMock what was sent.
+      expect(a_request(:post, %r{/api/v1/chat}).with { |req| req.body.include?(first.raw.body['response_id']) })
+        .to have_been_made
     end
 
     it "#{provider}/#{model} supports streaming responses" do

@@ -16,6 +16,10 @@ RSpec.describe 'RubyLLM::Providers::LMS embedding routing' do # rubocop:disable 
     { 'data' => [{ 'embedding' => [0.1, 0.2, 0.3] }], 'usage' => { 'prompt_tokens' => 3 } }
   end
 
+  # RubyLLM.embed resolves the model before it reaches the provider, and the
+  # usage tracker reads its id, so a bare String is not what callers pass.
+  let(:embedding_model) { RubyLLM::Model.new(id: 'text-embedding-nomic-embed-text-v1.5', provider: 'lms') }
+
   def provider_with(protocol)
     config.lms_protocol = protocol
     RubyLLM::Providers::LMS.new(config).tap do |provider|
@@ -28,7 +32,7 @@ RSpec.describe 'RubyLLM::Providers::LMS embedding routing' do # rubocop:disable 
     it "embeds over /v1/embeddings under lms_protocol = #{protocol}" do
       provider = provider_with(protocol)
 
-      embedding = provider.embed('Ruby', model: 'text-embedding-nomic-embed-text-v1.5', dimensions: nil)
+      embedding = provider.embed('Ruby', model: embedding_model, dimensions: nil)
 
       expect(embedding.vectors).to eq([0.1, 0.2, 0.3])
       expect(provider.connection).to have_received(:post)

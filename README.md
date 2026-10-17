@@ -95,6 +95,7 @@ provider.list_models.each { |model| puts model.id }
 | [OpenAI](#the-openai-api) | `POST /v1/chat/completions`, `POST /v1/responses`, `GET /v1/models`, `POST /v1/embeddings`, `POST /v1/completions` | `:chat_completions` (default), `:responses` |
 | [Anthropic](#the-anthropic-api) | `POST /v1/messages` | `:anthropic` |
 | [Native REST](#the-native-rest-api) | v0: `POST /api/v0/chat/completions`, `GET /api/v0/models`, `POST /api/v0/embeddings`, … <br> v1: `POST /api/v1/chat`, `GET /api/v1/models`, `POST /api/v1/models/load`, `/unload`, `/download` | `:native_v0`, `:native_chat` |
+| [Decisions](#judgments-with-decision-models) | OpenAI: `POST /v1/decisions` <br> Jev System One: `POST /v1/systemone` | `:decisions` (default for judgments), `:system_one` |
 
 Everything but the default is opt-in. Pick a protocol process-wide, for one
 conversation, or for a single chat:
@@ -431,6 +432,99 @@ API — set idle TTL per request through the OpenAI endpoints (see
 
 ---
 
+# Judgments with decision models
+
+LM Studio 0.4.26 added two endpoints for **decision models**: models that
+answer typed questions with probabilities instead of generating text.
+RubyLLM 2.1 calls these **judgments** (`RubyLLM::Judge`, `RubyLLM.judge`),
+and this gem points them at LM Studio. One call can ask three kinds of
+question:
+
+| Question | Answer |
+| --- | --- |
+| `probability` | the chance a condition holds, 0 to 1 |
+| `choice` | one option from a fixed set, a probability for every option, and a confidence |
+| `score` | a position on an ordered scale (it can fall between levels), per-level probabilities, and a confidence |
+
+```ruby
+class TicketTriage < RubyLLM::Judge
+  model 'clef-flash', provider: :lms
+
+  probability :urgent, 'Does this need attention today?'
+
+  choice :department, 'Which team should handle this?' do
+    billing   'Payments and refunds'
+    technical 'Bugs and integrations'
+    other     'Everything else'
+  end
+
+  score :frustration, 'How frustrated is the customer?', %w[Calm Frustrated Angry]
+end
+
+judgment = TicketTriage.judge('I was charged twice. Please fix it today.')
+judgment.urgent.probability     # => 0.96
+judgment.department.choice      # => :billing
+judgment.department.confidence  # => 0.87
+judgment.frustration.score      # => 1.68
+```
+
+Those numbers came from Clef Flash. Smaller models are faster but less sure:
+on the same ticket, D1 Omni 600M also picks `:billing` (confidence 0.78), while
+Kev 0.8B picks `:other`.
+
+RubyLLM's [judgments guide](https://rubyllm.com/judgments/) covers the full
+DSL: structured input, dynamic options, and thresholds.
+
+**You need a decision model.** A chat model is rejected outright: *"There are
+no downloaded decision models."* A decision model has to be one LM Studio
+itself identifies as such. A model sharing a decision model's name is not
+enough: an MLX conversion of Clef Flash loads as an ordinary LLM and is
+rejected by both endpoints. `GET /api/v1/models` reports the ones LM Studio
+recognizes with `type: "decision"`, and `provider.list_models` lists them as
+judgment models (output modality `judgment`, capability `judgment`, plus
+`decision_type` in the metadata).
+
+These GGUF decision models are known to work (download with `lms get <URL>`):
+
+| Model | Hugging Face | Size | Images |
+| --- | --- | --- | --- |
+| Kev 0.8B | [ggml-org/Kev-0.8B-GGUF](https://huggingface.co/ggml-org/Kev-0.8B-GGUF) | 0.8 GB | no |
+| D1 Omni 600M | [LiquidAI/d1-omni-600M-GGUF](https://huggingface.co/LiquidAI/d1-omni-600M-GGUF) | 0.8 GB | yes |
+| Clef Flash | [ggml-org/Clef-Flash-GGUF](https://huggingface.co/ggml-org/Clef-Flash-GGUF) | 7.4 GB | yes |
+
+Other repositories tagged
+[`decision-model`](https://huggingface.co/models?other=decision-model) on
+Hugging Face should work too, as long as LM Studio lists them as decision
+models.
+
+## Choosing the endpoint
+
+Judgments go to a decision endpoint whatever `lms_protocol` says; a chat
+protocol never handles them. `lms_judgment_protocol` picks which one:
+
+| | `:decisions` (default) | `:system_one` |
+| --- | --- | --- |
+| Endpoint | `POST /v1/decisions` (OpenAI's Decisions API) | `POST /v1/systemone` (Jev / TypeSafe System One) |
+| Images (`with:`) | inline base64 data URLs in the input content | inline base64 data URLs in a top-level `images` array |
+
+```ruby
+RubyLLM.configure { |config| config.lms_judgment_protocol = :system_one }
+```
+
+Both endpoints answer the same questions with the same models, and both take
+images for a model with a vision adapter (`list_models` shows `image` among its
+input modalities):
+
+```ruby
+TicketTriage.judge('Customer photo of the delivered box', with: 'box.png')
+```
+
+Each answer reports the instance that served it as `judgment.model`. When LM
+Studio loads a model on demand beside a copy you loaded yourself, that is the
+instance's identifier (`clef-flash:2`), not the model id.
+
+---
+
 # Models on your machine
 
 ## What listing enrichment adds
@@ -454,6 +548,7 @@ up whatever the server knows:
 | `reasoning_options` | v1 | `[{type: "effort", values: ["none", "low", "medium", "xhigh"], default: "xhigh"}, {type: "toggle"}]` |
 | `loaded_context_length` | v1 | `8192` (the loaded instance's window, which can be smaller than `context_window`) |
 | `remaining_ttl_seconds` | v1 | `1050` — how long before an idle JIT-loaded instance evicts |
+| `decision_type` | v1, decision models only | the kind of decision model, when LM Studio reports one |
 
 `Model#capabilities` picks up `function_calling` and `tool_choice` from the
 model's tool-use training, `vision` from its vision flag, and `reasoning` from
@@ -462,6 +557,10 @@ model LM Studio serves: the server constrains generation with a grammar built
 from your schema, so structured output works even on weights with no tool
 training (whether the *values* are any good is a separate question — see the
 gpt-oss caveat in `spec/support/models.rb`).
+
+Decision models are the exception: they don't chat, so they get the
+`judgment` capability and output modality and nothing else. They take image
+input only when LM Studio reports a vision adapter for them.
 
 ## The packaged catalog (models.json)
 
@@ -526,7 +625,7 @@ models are resident right now.
 | --- | --- |
 | LM Studio (macOS) | 0.4.24+1 |
 | `lms` CLI | commit `ff50809` |
-| RubyLLM | 2.0.0 |
+| RubyLLM | 2.1.1 (cassettes recorded on 2.0.0) |
 
 This is the server the committed VCR cassettes were recorded from, and the
 version every endpoint and capability claim above was checked against. LM
