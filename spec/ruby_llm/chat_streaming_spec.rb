@@ -16,7 +16,7 @@ RSpec.describe RubyLLM::Chat, :live do
       expect(chunks.first).to be_a(RubyLLM::Chunk)
       expect(response.raw.status).to eq(200)
       expect(response.raw.headers).not_to be_empty
-      expect(response.raw.env.request_body).not_to be_empty
+      expect(response.raw.env.request_body).to be_nil # RubyLLM >= 2.1 releases the request
     end
   end
 end

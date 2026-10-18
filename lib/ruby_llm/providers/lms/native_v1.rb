@@ -45,14 +45,19 @@ module RubyLLM
             'selected_variant' => model['selected_variant'],
             'reasoning_options' => normalize_v1_reasoning(capabilities['reasoning']),
             'loaded_context_length' => instance&.dig('config', 'context_length'),
-            'remaining_ttl_seconds' => instance&.dig('remaining_ttl_seconds')
+            'remaining_ttl_seconds' => instance&.dig('remaining_ttl_seconds'),
+            'decision_type' => model['decision_type'],
+            'has_vision_adapter' => model['has_vision_adapter']
           }.compact
         end
 
-        # v1 reports only 'llm' and 'embedding' and states vision as a
-        # capability; v0 spells those 'embeddings' and 'vlm'.
+        # v1 reports 'llm', 'embedding', and 'decision', and states vision as
+        # a capability; v0 spells the first two 'embeddings' and 'vlm'. A
+        # decision model stays 'decision' even when it reads images — that
+        # is what has_vision_adapter says.
         def normalize_v1_type(model, capabilities)
           return 'embeddings' if model['type'] == 'embedding'
+          return 'decision' if model['type'] == 'decision'
           return 'vlm' if capabilities['vision']
 
           model['type']

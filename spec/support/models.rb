@@ -56,6 +56,19 @@ NATIVE_REASONING_MODELS = [
 ].freeze
 
 MANAGEMENT_MODEL = 'qwen3-0.6b-bible-assistant'
+# Judgments (RubyLLM.judge) over /v1/decisions and /v1/systemone. Needs a
+# model LM Studio itself tags `type: "decision"` in GET /api/v1/models -- a
+# same-named MLX or GGUF conversion (mlx-community/clef-flash, for one) loads
+# as a plain LLM and both endpoints refuse it. Add `vision: true` for a model
+# LM Studio reports has_vision_adapter for. These are the GGUFs from
+# huggingface.co/ggml-org/Kev-0.8B-GGUF, LiquidAI/d1-omni-600M-GGUF and
+# ggml-org/Clef-Flash-GGUF.
+JUDGMENT_MODELS = [
+  { provider: PROVIDER, model: 'kev-0.8b' },
+  { provider: PROVIDER, model: 'd1-omni-600m', vision: true },
+  { provider: PROVIDER, model: 'clef-flash', vision: true }
+].freeze
+
 IMAGE_GENERATION_MODELS = [].freeze
 SPEECH_MODELS = [].freeze
 VIDEO_GENERATION_MODELS = [].freeze

@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/decisions
+    body:
+      encoding: UTF-8
+      string: '{"model":"kev-0.8b","input":"I was charged twice and I am furious.
+        Refund the duplicate charge today!","questions":[{"type":"predicate","name":"urgent","instructions":"Does
+        this need attention today?"},{"type":"choice","name":"department","instructions":"Which
+        team should handle this?","choices":[{"value":"billing","description":"Payments
+        and refunds"},{"value":"technical","description":"Bugs and integrations"},{"value":"other","description":"Everything
+        else"}]},{"type":"score","name":"frustration","instructions":"How frustrated
+        is the customer?","levels":[{"label":"0","description":"Calm"},{"label":"1","description":"Frustrated"},{"label":"2","description":"Angry"}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v2.15.0
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '836'
+      Etag:
+      - W/"344-OIS74Vb8My0ygkO1/LPBv6yCIo0"
+      Date:
+      - Sat, 17 Oct 2026 22:45:38 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: '{"model":"kev-0.8b","answers":[{"type":"predicate","name":"urgent","probability":0.7586812058490744},{"type":"choice","name":"department","choice":"billing","probabilities":[{"value":"billing","probability":0.5928401514866971},{"value":"technical","probability":0.04687173632571141},{"value":"other","probability":0.3602881121875916}],"confidence":0.38926022723004566},{"type":"score","name":"frustration","score":1.7022344343298745,"probabilities":[{"value":0,"label":"0","probability":0.018326543452252635},{"value":1,"label":"1","probability":0.2611124787656201},{"value":2,"label":"2","probability":0.7205609777821272}],"confidence":0.553351651494812}],"usage":{"input_tokens":153,"output_tokens":0,"input_tokens_details":{"cached_tokens":0,"cache_write_tokens":0},"output_tokens_details":{"reasoning_tokens":0},"total_tokens":153}}'
+  recorded_at: Sat, 17 Oct 2026 22:45:38 GMT
+recorded_with: VCR 6.4.0

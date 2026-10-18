@@ -5,6 +5,45 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Judgments with LM Studio decision models (LM Studio 0.4.26 and later), through
+  RubyLLM 2.1's `RubyLLM::Judge` and `RubyLLM.judge`. Two new protocols:
+  - `:decisions`: OpenAI's Decisions API at `POST /v1/decisions`, and the default.
+    Accepts images through `with:`, sent as inline base64 data URLs. Answers are
+    matched to questions by name, since RubyLLM 2.1.1 pairs them by position.
+    If the response names no model, the requested model id is used.
+  - `:system_one`: the Jev (TypeSafe) System One API at `POST /v1/systemone`.
+    Accepts images, sent as inline base64 data URLs in the top-level `images`
+    array where LM Studio reads them (the stock protocol refuses images). An
+    image judged without text sends an empty `state`, which the endpoint
+    requires.
+- Live specs and cassettes for judgments with Kev 0.8B, D1 Omni 600M and Clef
+  Flash, over both endpoints, including image input.
+- Examples 16-20, on open-source decision models: the three question types, a
+  reusable `RubyLLM::Judge` subclass, a sweep of every decision model over both
+  endpoints, image judgments, and a decision model screening an inbox ahead of
+  a chat model. `examples/common.rb` gains `DECISION_MODEL`
+  (`LMS_DECISION_MODEL`, default `d1-omni-600m`) and `judgment_context`.
+- A documentation site (MkDocs Material, `docs/` and `mkdocs.yml`) published
+  to GitHub Pages: getting started, the chat protocols, judgments and decision
+  models (with measured results per model and endpoint), models and model
+  management, architecture, API reference, examples and development notes.
+- `lms_judgment_protocol` configuration option to choose between the two
+  endpoints (`:decisions` by default). Judgments go to a decision endpoint
+  whatever `lms_protocol` selects.
+- Decision models (`type: "decision"` in `GET /api/v1/models`) are listed as
+  judgment models: output modality and capability `judgment`, image input when
+  LM Studio reports a vision adapter, and `decision_type` in the metadata.
+
+### Changed
+
+- Require `ruby_llm >= 2.1.1`, the first release line with judgments.
+- Specs follow RubyLLM 2.1, which releases a request's body once the response
+  arrives (`raw.env.request_body` is now `nil`).
+
 ## [0.2.1] - 2026-09-18
 
 ### Changed

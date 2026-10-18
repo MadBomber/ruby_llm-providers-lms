@@ -13,6 +13,7 @@
 #   LMS_API_BASE=http://otherhost:1234/v1
 #   LMS_API_KEY=...              # only if the server sits behind auth
 #   LMS_MODEL=qwen/qwen3-4b      # any model id your LM Studio knows
+#   LMS_DECISION_MODEL=kev-0.8b  # a decision model, for the judgment demos
 
 require 'bundler/setup'
 
@@ -25,6 +26,14 @@ end
 require 'ruby_llm/providers/lms'
 
 MODEL = ENV.fetch('LMS_MODEL', 'qwen/qwen3.8-27b')
+
+# The judgment demos (16-20) need a decision model: one LM Studio lists with
+# `type: "decision"`, such as the open GGUFs ggml-org/Kev-0.8B-GGUF,
+# LiquidAI/d1-omni-600M-GGUF or ggml-org/Clef-Flash-GGUF. D1 Omni 600M is the
+# default because it is small and also reads images.
+#
+#   lms get https://huggingface.co/LiquidAI/d1-omni-600M-GGUF
+DECISION_MODEL = ENV.fetch('LMS_DECISION_MODEL', 'd1-omni-600m')
 
 RubyLLM.configure do |config|
   config.lms_api_base = ENV.fetch('LMS_API_BASE', 'http://localhost:1234/v1')
@@ -45,4 +54,11 @@ def new_chat(model: MODEL, protocol: nil)
 
   RubyLLM.context { |config| config.lms_protocol = protocol }
          .chat(model:, provider: :lms)
+end
+
+# A RubyLLM context whose judgments go to one of LM Studio's two decision
+# endpoints: :decisions (POST /v1/decisions, the default) or :system_one
+# (POST /v1/systemone). Pass it as `context:` to RubyLLM.judge or Judge.judge.
+def judgment_context(endpoint)
+  RubyLLM.context { |config| config.lms_judgment_protocol = endpoint }
 end

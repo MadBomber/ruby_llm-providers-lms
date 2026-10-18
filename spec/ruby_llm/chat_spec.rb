@@ -22,7 +22,7 @@ RSpec.describe RubyLLM::Chat, :live do
       expect(response.raw.status).to eq(200)
       expect(response.raw.headers).not_to be_empty
       expect(response.raw.body).not_to be_empty
-      expect(response.raw.env.request_body).not_to be_empty
+      expect(response.raw.env.request_body).to be_nil # RubyLLM >= 2.1 releases the request
     end
 
     it "#{provider}/#{model} can handle a multi-turn conversation" do

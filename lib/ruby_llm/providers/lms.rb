@@ -8,6 +8,8 @@ require 'ruby_llm/providers/lms/native_v1'
 require 'ruby_llm/providers/lms/models'
 require 'ruby_llm/providers/lms/responses'
 require 'ruby_llm/providers/lms/anthropic_messages'
+require 'ruby_llm/providers/lms/decisions'
+require 'ruby_llm/providers/lms/system_one'
 require 'ruby_llm/providers/lms/model_management'
 require 'ruby_llm/providers/lms/native_chat/conversation'
 require 'ruby_llm/providers/lms/native_chat/streaming'
@@ -49,6 +51,10 @@ module RubyLLM
       protocol :native_chat, NativeChat
       protocol :native_v0, NativeChatCompletions
       protocol :anthropic, AnthropicMessages
+      protocol :decisions, Decisions
+      protocol :system_one, SystemOne
+
+      DEFAULT_JUDGMENT_PROTOCOL = :decisions
 
       include ModelManagement
 
@@ -80,13 +86,20 @@ module RubyLLM
         embedding_protocol(model).render_embedding(text, model: model_id_for(model), dimensions: dimensions)
       end
 
+      # Which of LM Studio's two decision endpoints RubyLLM.judge talks to:
+      # :decisions (POST /v1/decisions) unless lms_judgment_protocol says
+      # :system_one (POST /v1/systemone).
+      def judgment_protocol
+        @config.lms_judgment_protocol || DEFAULT_JUDGMENT_PROTOCOL
+      end
+
       class << self
         def display_name
           'LM Studio'
         end
 
         def configuration_options
-          %i[lms_api_base lms_api_key]
+          %i[lms_api_base lms_api_key lms_judgment_protocol]
         end
 
         def configuration_requirements
@@ -99,6 +112,14 @@ module RubyLLM
       end
 
       private
+
+      # Judgments go to a decision endpoint whichever chat dialect is in
+      # effect: lms_protocol would otherwise route RubyLLM.judge to, say,
+      # the Anthropic protocol, which has no judgments at all.
+      def resolve_protocol(name, model, operation: nil, **)
+        name ||= judgment_protocol if operation == :judge
+        super
+      end
 
       def embedding_protocol(model)
         protocols.fetch(:chat_completions).new(self, model)

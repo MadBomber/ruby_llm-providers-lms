@@ -44,6 +44,10 @@ Messages API, and LM Studio's own **native REST** API — which adds inference
 stats, server-stored conversations, and model management. The provider works
 out of the box: no API key, no configuration.
 
+**Documentation:** <https://madbomber.github.io/ruby_llm-providers-lms> —
+guides for every protocol, judgments with open-source decision models, model
+management, and the examples.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -95,6 +99,7 @@ provider.list_models.each { |model| puts model.id }
 | [OpenAI](#the-openai-api) | `POST /v1/chat/completions`, `POST /v1/responses`, `GET /v1/models`, `POST /v1/embeddings`, `POST /v1/completions` | `:chat_completions` (default), `:responses` |
 | [Anthropic](#the-anthropic-api) | `POST /v1/messages` | `:anthropic` |
 | [Native REST](#the-native-rest-api) | v0: `POST /api/v0/chat/completions`, `GET /api/v0/models`, `POST /api/v0/embeddings`, … <br> v1: `POST /api/v1/chat`, `GET /api/v1/models`, `POST /api/v1/models/load`, `/unload`, `/download` | `:native_v0`, `:native_chat` |
+| [Decisions](#judgments-with-decision-models) | OpenAI: `POST /v1/decisions` <br> Jev System One: `POST /v1/systemone` | `:decisions` (default for judgments), `:system_one` |
 
 Everything but the default is opt-in. Pick a protocol process-wide, for one
 conversation, or for a single chat:
@@ -121,10 +126,11 @@ Stay on the default unless you need something only another column offers.
 | Inference stats | no | no | no | yes, via `raw` | yes, via `tokens` |
 | LM Studio request extras | yes | yes | yes | yes | sampling only — see below |
 | Server-stored conversations | no | no | no | no | yes |
-| Reasoning control | yes | yes | **no** | yes | yes |
-| Reasoning text returned | yes | yes | no | yes | yes |
+| Reasoning control | yes | yes | yes | yes | yes |
+| Reasoning text returned | yes | yes | yes | yes | yes |
 
-Checked against LM Studio 0.4.24+1 (see [Tested against](#tested-against)).
+Checked against LM Studio 0.4.24+1, the `:anthropic` reasoning rows against
+0.4.26 (see [Tested against](#tested-against)).
 Where a protocol ignores something silently rather than raising, the section
 below says so — those are the cases that cost you an afternoon.
 
@@ -196,10 +202,10 @@ Model 'bible-study-phi3-mini' does not expose reasoning configuration.
 ```
 
 So on `:native_chat`, only ask for reasoning from a model whose listing
-reports it. `with_thinking` and `with_thinking(false)` already refuse
-client-side for a model in the registry that reports none; an explicit
-`with_thinking(effort:)`, or a model id not in your catalog, reaches the
-server and gets the error above.
+reports it. `with_thinking` and `with_thinking(false)` refuse before any
+request is sent (on `ask`) for a model that reports no reasoning options —
+one in the registry without them, or one not in your catalog at all. Only an
+explicit `with_thinking(effort:)` reaches the server and gets the error above.
 
 Which efforts you can ask for depends on what you have downloaded:
 
@@ -298,6 +304,10 @@ Plain exchanges, streaming (proper `message_start` / `content_block_delta`
 SSE events) and tool calls (`tool_use` blocks with `stop_reason: "tool_use"`,
 executed as ordinary `RubyLLM::Tool` objects in your process) all work; the
 live specs in `spec/ruby_llm/chat_anthropic_spec.rb` cover all three.
+Reasoning works too: `with_thinking(effort: :low)` sends Anthropic's
+`thinking` field, and the reasoning comes back as a `thinking` content block
+in `response.thinking.text` (no thinking token count, since Anthropic's usage
+block has none).
 
 **`with_schema` does not work here, and fails quietly.** LM Studio ignores the
 schema and nothing raises. The same model and schema, two protocols:
@@ -384,7 +394,9 @@ response = chat.ask('Hello')
   filtering. Executed tool calls appear in `response.raw.body['output']`.
 - **Per-request context length** — `with_provider_options(context_length: 8192)`.
 - **Opting out of storage** — `with_provider_options(store: false)` keeps the
-  conversation off the server, at the cost of multi-turn continuity.
+  conversation off the server. The chat is then single-turn: a second `ask`
+  raises, because the endpoint cannot replay history and has nothing stored
+  to continue from.
 
 - **Sampling settings** — `top_p`, `top_k`, `min_p` and `repeat_penalty` are
   part of the native request schema, so `with_provider_options(top_k: 40)` and
@@ -431,6 +443,100 @@ API — set idle TTL per request through the OpenAI endpoints (see
 
 ---
 
+# Judgments with decision models
+
+LM Studio 0.4.26 added two endpoints for **decision models**: models that
+answer typed questions with probabilities instead of generating text.
+RubyLLM 2.1 calls these **judgments** (`RubyLLM::Judge`, `RubyLLM.judge`),
+and this gem points them at LM Studio. One call can ask three kinds of
+question:
+
+| Question | Answer |
+| --- | --- |
+| `probability` | the chance a condition holds, 0 to 1 |
+| `choice` | one option from a fixed set, a probability for every option, and a confidence |
+| `score` | a position on an ordered scale (it can fall between levels), per-level probabilities, and a confidence |
+
+```ruby
+class TicketTriage < RubyLLM::Judge
+  model 'clef-flash', provider: :lms
+
+  probability :urgent, 'Does this need attention today?'
+
+  choice :department, 'Which team should handle this?' do
+    billing   'Payments and refunds'
+    technical 'Bugs and integrations'
+    other     'Everything else'
+  end
+
+  score :frustration, 'How frustrated is the customer?', %w[Calm Frustrated Angry]
+end
+
+judgment = TicketTriage.judge('I was charged twice. Please fix it today.')
+judgment.urgent.probability     # => 0.96
+judgment.department.choice      # => :billing
+judgment.department.confidence  # => 0.87
+judgment.frustration.score      # => 1.68
+```
+
+Those numbers came from Clef Flash. Smaller models are faster but less sure:
+on the same ticket, D1 Omni 600M also picks `:billing` (confidence 0.78), while
+Kev 0.8B picks `:other`.
+
+RubyLLM's [judgments guide](https://rubyllm.com/judgments/) covers the full
+DSL: structured input, dynamic options, and thresholds.
+
+**You need a decision model.** A chat model is rejected outright — *"Invalid
+model identifier"*, or *"There are no downloaded decision models"* when you
+have none at all. A decision model has to be one LM Studio
+itself identifies as such. A model sharing a decision model's name is not
+enough: an MLX conversion of Clef Flash loads as an ordinary LLM and is
+rejected by both endpoints. `GET /api/v1/models` reports the ones LM Studio
+recognizes with `type: "decision"`, and `provider.list_models` lists them as
+judgment models (output modality `judgment`, capability `judgment`, plus
+`decision_type` in the metadata).
+
+These GGUF decision models are known to work (download with `lms get <URL>`):
+
+| Model | Hugging Face | Size | Images |
+| --- | --- | --- | --- |
+| Kev 0.8B | [ggml-org/Kev-0.8B-GGUF](https://huggingface.co/ggml-org/Kev-0.8B-GGUF) | 0.8 GB | no |
+| D1 Omni 600M | [LiquidAI/d1-omni-600M-GGUF](https://huggingface.co/LiquidAI/d1-omni-600M-GGUF) | 0.8 GB | yes |
+| Clef Flash | [ggml-org/Clef-Flash-GGUF](https://huggingface.co/ggml-org/Clef-Flash-GGUF) | 7.4 GB | yes |
+
+Other repositories tagged
+[`decision-model`](https://huggingface.co/models?other=decision-model) on
+Hugging Face should work too, as long as LM Studio lists them as decision
+models.
+
+## Choosing the endpoint
+
+Judgments go to a decision endpoint whatever `lms_protocol` says; a chat
+protocol never handles them. `lms_judgment_protocol` picks which one:
+
+| | `:decisions` (default) | `:system_one` |
+| --- | --- | --- |
+| Endpoint | `POST /v1/decisions` (OpenAI's Decisions API) | `POST /v1/systemone` (Jev / TypeSafe System One) |
+| Images (`with:`) | inline base64 data URLs in the input content | inline base64 data URLs in a top-level `images` array |
+
+```ruby
+RubyLLM.configure { |config| config.lms_judgment_protocol = :system_one }
+```
+
+Both endpoints answer the same questions with the same models, and both take
+images for a model with a vision adapter (`list_models` shows `image` among its
+input modalities):
+
+```ruby
+TicketTriage.judge('Customer photo of the delivered box', with: 'box.png')
+```
+
+Each answer reports the instance that served it as `judgment.model`. When LM
+Studio loads a model on demand beside a copy you loaded yourself, that is the
+instance's identifier (`clef-flash:2`), not the model id.
+
+---
+
 # Models on your machine
 
 ## What listing enrichment adds
@@ -454,6 +560,7 @@ up whatever the server knows:
 | `reasoning_options` | v1 | `[{type: "effort", values: ["none", "low", "medium", "xhigh"], default: "xhigh"}, {type: "toggle"}]` |
 | `loaded_context_length` | v1 | `8192` (the loaded instance's window, which can be smaller than `context_window`) |
 | `remaining_ttl_seconds` | v1 | `1050` — how long before an idle JIT-loaded instance evicts |
+| `decision_type` | v1, decision models only | the kind of decision model, when LM Studio reports one |
 
 `Model#capabilities` picks up `function_calling` and `tool_choice` from the
 model's tool-use training, `vision` from its vision flag, and `reasoning` from
@@ -462,6 +569,10 @@ model LM Studio serves: the server constrains generation with a grammar built
 from your schema, so structured output works even on weights with no tool
 training (whether the *values* are any good is a separate question — see the
 gpt-oss caveat in `spec/support/models.rb`).
+
+Decision models are the exception: they don't chat, so they get the
+`judgment` capability and output modality and nothing else. They take image
+input only when LM Studio reports a vision adapter for them.
 
 ## The packaged catalog (models.json)
 
@@ -525,8 +636,9 @@ models are resident right now.
 | Component | Version |
 | --- | --- |
 | LM Studio (macOS) | 0.4.24+1 |
+| LM Studio (macOS), judgments and `:anthropic` reasoning | 0.4.26 |
 | `lms` CLI | commit `ff50809` |
-| RubyLLM | 2.0.0 |
+| RubyLLM | 2.1.1 (cassettes recorded on 2.0.0) |
 
 This is the server the committed VCR cassettes were recorded from, and the
 version every endpoint and capability claim above was checked against. LM
@@ -571,7 +683,9 @@ the ones that need a particular kind of model are commented there:
 | `REASONING_OFF_MODELS` | one of those that also reports LM Studio's `off` |
 | `VISION_MODELS` | a model flagged `vision: true` |
 | `EMBEDDING_MODELS` | an embedding model |
-| `NATIVE_CHAT_MODELS`, `NATIVE_REASONING_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+| `NATIVE_CHAT_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+| `NATIVE_REASONING_MODELS` | a model that emits reasoning items on the native endpoint (gpt-oss does; most instruct fine-tunes do not) |
+| `JUDGMENT_MODELS` | decision models LM Studio tags `type: "decision"`; `vision: true` for ones with a vision adapter |
 
 The portable contract specs are adapted from
 [RubyLLM's live specs](https://github.com/crmne/ruby_llm/tree/main/spec/ruby_llm).

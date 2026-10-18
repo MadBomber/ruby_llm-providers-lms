@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:1234/v1/systemone
+    body:
+      encoding: UTF-8
+      string: '{"model":"d1-omni-600m","state":"I was charged twice and I am furious.
+        Refund the duplicate charge today!","questions":{"urgent":{"type":"noul","instructions":"Does
+        this need attention today?"},"department":{"type":"choice","instructions":"Which
+        team should handle this?","criteria":{"billing":"Payments and refunds","technical":"Bugs
+        and integrations","other":"Everything else"}},"frustration":{"type":"score","instructions":"How
+        frustrated is the customer?","criteria":["Calm","Frustrated","Angry"]}}}'
+    headers:
+      User-Agent:
+      - Faraday v2.15.0
+      Authorization:
+      - Bearer <AUTH_TOKEN>
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '557'
+      Etag:
+      - W/"22d-r2tpgSy/MmvXlg7P7iha7F+g9oc"
+      Date:
+      - Sat, 17 Oct 2026 22:45:33 GMT
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: '{"model":"d1-omni-600m","answers":{"urgent":{"type":"noul","noul":0.946461590650899},"department":{"type":"choice","choice":"billing","probabilities":{"billing":0.9755982954548812,"technical":0.004009522057246447,"other":0.020392182487872407},"confidence":0.9633974431823218},"frustration":{"type":"score","score":1.9951155179466176,"legend":{"0":"Calm","1":"Frustrated","2":"Angry"},"probabilities":{"0":0.0009141274543421362,"1":0.003056227144698069,"2":0.9960296454009597},"confidence":0.9926732769199265}},"usage":{"input_tokens":159,"output_tokens":0}}'
+  recorded_at: Sat, 17 Oct 2026 22:45:33 GMT
+recorded_with: VCR 6.4.0

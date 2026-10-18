@@ -57,22 +57,31 @@ module RubyLLM
           end
         end
 
+        # A decision model answers judgments (RubyLLM.judge), not chat, and
+        # reads images only when LM Studio reports a vision adapter for it.
         def build_modalities(detail)
           return { input: %w[text], output: %w[embeddings] } if embedding?(detail)
 
           input = %w[text]
           input << 'image' if vision?(detail)
-          { input: input, output: %w[text] }
+          { input: input, output: decision?(detail) ? %w[judgment] : %w[text] }
         end
 
         def build_capabilities(detail)
           return [] if embedding?(detail)
+          return %w[judgment] if decision?(detail)
 
+          model_capabilities + chat_capabilities(detail)
+        end
+
+        # The capabilities a chat model's own weights bring, beyond what the
+        # server provides for every chat model (model_capabilities).
+        def chat_capabilities(detail)
           reported = Array(detail['capabilities'])
           derived = CAPABILITY_MAP.filter_map { |native, names| names if reported.include?(native) }.flatten
           derived << 'vision' if vision?(detail) && !derived.include?('vision')
           derived << 'reasoning' if detail['reasoning_options']
-          model_capabilities + derived
+          derived
         end
 
         def build_metadata(model, detail)
@@ -92,7 +101,8 @@ module RubyLLM
             selected_variant: detail['selected_variant'],
             reasoning_options: detail['reasoning_options'],
             loaded_context_length: detail['loaded_context_length'],
-            remaining_ttl_seconds: detail['remaining_ttl_seconds']
+            remaining_ttl_seconds: detail['remaining_ttl_seconds'],
+            decision_type: detail['decision_type']
           }.compact
         end
 
@@ -100,7 +110,13 @@ module RubyLLM
           detail['type'] == 'embeddings'
         end
 
+        def decision?(detail)
+          detail['type'] == 'decision'
+        end
+
         def vision?(detail)
+          return detail['has_vision_adapter'] == true if decision?(detail)
+
           detail['type'] == 'vlm' || Array(detail['capabilities']).include?('vision')
         end
 
