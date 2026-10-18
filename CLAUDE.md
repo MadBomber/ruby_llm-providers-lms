@@ -20,7 +20,14 @@ bundle exec rake flay         # duplicate-code detection (mass threshold 70)
 bundle exec rake archspec     # architecture checks (rules in Archspec.rb)
 bin/console                   # IRB with the gem loaded
 bundle exec rake build        # build the gem into pkg/
+mkdocs serve                  # preview the docs site (docs/ + mkdocs.yml)
+mkdocs build --strict         # check docs links before committing
 ```
+
+The documentation site lives in `docs/` (MkDocs Material) and deploys to
+GitHub Pages from `.github/workflows/deploy-github-pages.yml`. When behavior
+or measured numbers change, update the matching docs page as well as the
+README; figures quoted in `docs/judgments/` came from real runs.
 
 Overcommit runs rubocop (auto-correct), flay, archspec, rspec, and gitleaks as
 pre-commit hooks, so the full suite must pass before any commit lands.

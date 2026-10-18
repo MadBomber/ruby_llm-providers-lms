@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   endpoints, image judgments, and a decision model screening an inbox ahead of
   a chat model. `examples/common.rb` gains `DECISION_MODEL`
   (`LMS_DECISION_MODEL`, default `d1-omni-600m`) and `judgment_context`.
+- A documentation site (MkDocs Material, `docs/` and `mkdocs.yml`) published
+  to GitHub Pages: getting started, the chat protocols, judgments and decision
+  models (with measured results per model and endpoint), models and model
+  management, architecture, API reference, examples and development notes.
 - `lms_judgment_protocol` configuration option to choose between the two
   endpoints (`:decisions` by default). Judgments go to a decision endpoint
   whatever `lms_protocol` selects.

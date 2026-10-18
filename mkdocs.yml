@@ -1,0 +1,144 @@
+site_name: ruby_llm-providers-lms
+site_description: RubyLLM provider for LM Studio — local chat, embeddings, model management and judgments with decision models
+site_author: Dewayne VanHoozer
+site_url: https://madbomber.github.io/ruby_llm-providers-lms
+copyright: Copyright &copy; 2026 Dewayne VanHoozer
+
+repo_name: MadBomber/ruby_llm-providers-lms
+repo_url: https://github.com/MadBomber/ruby_llm-providers-lms
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/desktop-classic
+
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - content.action.edit
+    - content.action.view
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      title: On this page
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: MadBomber
+      repo: ruby_llm-providers-lms
+      normalize_issue_symbols: true
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra_css:
+  - assets/css/custom.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/MadBomber/ruby_llm-providers-lms
+      name: ruby_llm-providers-lms on GitHub
+    - icon: fontawesome/solid/gem
+      link: https://rubygems.org/gems/ruby_llm-providers-lms
+      name: ruby_llm-providers-lms on RubyGems
+    - icon: fontawesome/solid/book
+      link: https://rubyllm.com
+      name: RubyLLM
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - getting-started/index.md
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+      - Configuration: getting-started/configuration.md
+  - Protocols:
+      - protocols/index.md
+      - OpenAI API: protocols/openai.md
+      - Reasoning: protocols/reasoning.md
+      - Anthropic API: protocols/anthropic.md
+      - Native REST API: protocols/native.md
+  - Judgments:
+      - judgments/index.md
+      - Decision Models: judgments/decision-models.md
+      - Choosing the Endpoint: judgments/endpoints.md
+      - Judging Images: judgments/images.md
+      - Patterns and Tuning: judgments/patterns.md
+  - Models:
+      - models/index.md
+      - The Packaged Catalog: models/catalog.md
+      - Model Management: models/management.md
+  - Architecture:
+      - architecture/index.md
+  - API Reference:
+      - api/index.md
+  - Examples:
+      - examples/index.md
+      - Judgment Examples: examples/judgments.md
+  - Development:
+      - development/index.md
+  - Changelog: https://github.com/MadBomber/ruby_llm-providers-lms/blob/main/CHANGELOG.md

@@ -44,6 +44,10 @@ Messages API, and LM Studio's own **native REST** API — which adds inference
 stats, server-stored conversations, and model management. The provider works
 out of the box: no API key, no configuration.
 
+**Documentation:** <https://madbomber.github.io/ruby_llm-providers-lms> —
+guides for every protocol, judgments with open-source decision models, model
+management, and the examples.
+
 ## Installation
 
 Add this line to your application's Gemfile:
