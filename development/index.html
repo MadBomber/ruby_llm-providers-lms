@@ -1770,9 +1770,11 @@ assuming an endpoint behaves exactly as documented here.</p>
 <h2 id="specs">Specs<a class="headerlink" href="#specs" title="Permanent link">&para;</a></h2>
 <p>Two kinds:</p>
 <ul>
-<li><code>spec/ruby_llm/providers/lms_spec.rb</code> and the rest of
+<li><code>spec/ruby_llm/providers/lms_spec.rb</code> and most of
   <code>spec/ruby_llm/providers/lms/</code> — unit specs for the provider: registration,
-  protocols, configuration, listing, routing, judgment rendering and parsing.</li>
+  protocols, configuration, listing, routing, judgment rendering and parsing.
+  The two <code>*_live_spec.rb</code> files there are <code>:live</code> and record cassettes like
+  the contract specs.</li>
 <li><code>spec/ruby_llm/*_spec.rb</code> — contract specs adapted from
   <a href="https://github.com/crmne/ruby_llm/tree/main/spec/ruby_llm">RubyLLM's live specs</a>,
   tagged <code>:live</code> and driven by the model matrices in <code>spec/support/models.rb</code>.</li>
@@ -1829,8 +1831,12 @@ run records it fresh:</p>
 <td>an embedding model</td>
 </tr>
 <tr>
-<td><code>NATIVE_CHAT_MODELS</code>, <code>NATIVE_REASONING_MODELS</code>, <code>MANAGEMENT_MODEL</code></td>
+<td><code>NATIVE_CHAT_MODELS</code>, <code>MANAGEMENT_MODEL</code></td>
 <td>small models, so load/unload cycles stay fast</td>
+</tr>
+<tr>
+<td><code>NATIVE_REASONING_MODELS</code></td>
+<td>a model that emits reasoning items on the native endpoint (gpt-oss does; most instruct fine-tunes do not)</td>
 </tr>
 <tr>
 <td><code>JUDGMENT_MODELS</code></td>
@@ -1853,10 +1859,12 @@ above a mass of 70.</p>
 <p>This site is built with <a href="https://squidfunk.github.io/mkdocs-material/">MkDocs Material</a>
 from <code>docs/</code> and <code>mkdocs.yml</code>:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mkdocs<span class="w"> </span>serve<span class="w">           </span><span class="c1"># live preview at http://127.0.0.1:8000</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict<span class="w">  </span><span class="c1"># what CI checks</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict<span class="w">  </span><span class="c1"># what the deploy workflow runs; fails on a broken link</span>
 </span></code></pre></div>
-<p>Pushes to <code>main</code> or <code>develop</code> that touch the docs publish the site to GitHub
-Pages (<code>.github/workflows/deploy-github-pages.yml</code>).</p>
+<p>Pushes to <code>main</code> or <code>develop</code> that touch <code>docs/</code>, <code>mkdocs.yml</code> or the workflow
+itself publish the site to GitHub Pages
+(<code>.github/workflows/deploy-github-pages.yml</code>); it can also be run by hand from
+the Actions tab.</p>
 <h2 id="ci">CI<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h2>
 <p><code>.github/workflows/ci.yml</code> runs <code>bundle exec rake</code> on Ruby 3.3, 3.4 and 4.0.
 The committed <code>Gemfile.lock</code> must install on every one of them.</p>

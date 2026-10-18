@@ -1854,7 +1854,8 @@ optional <code>allowed_tools</code> filtering. Executed tool calls appear in
 <dd><code>with_provider_options(context_length: 8192)</code>.</dd>
 <dt>Opting out of storage</dt>
 <dd><code>with_provider_options(store: false)</code> keeps the conversation off the
-server, at the cost of multi-turn continuity.</dd>
+server. The chat is then single-turn: a second <code>ask</code> raises, because the
+endpoint cannot replay history and has nothing stored to continue from.</dd>
 <dt>Sampling settings</dt>
 <dd><code>top_p</code>, <code>top_k</code>, <code>min_p</code> and <code>repeat_penalty</code> are part of the native
 schema, so <code>with_provider_options(top_k: 40)</code> works here too.</dd>
@@ -1870,7 +1871,8 @@ schema, so <code>with_provider_options(top_k: 40)</code> works here too.</dd>
 </ul>
 <p>The endpoint reports no stop reason of its own. When a generation runs into
 the <code>max_output_tokens</code> the request asked for, the provider reports
-<code>finish_reason: :length</code> from the token counts.</p>
+<code>finish_reason: :length</code> from the token counts. (Note the spelling: RubyLLM's
+stock protocols report truncation as <code>:max_tokens</code>.)</p>
 <h2 id="model-listing-and-management">Model listing and management<a class="headerlink" href="#model-listing-and-management" title="Permanent link">&para;</a></h2>
 <p>The native listings enrich <code>provider.list_models</code>, and the v1 management
 endpoints back the provider's <code>load_model</code>, <code>unload_model</code> and friends. See

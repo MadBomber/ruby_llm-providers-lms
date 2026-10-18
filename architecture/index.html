@@ -1708,8 +1708,8 @@ provider answers by operation, not just by configuration:</p>
 </tr>
 <tr>
 <td>list models</td>
-<td>the chat protocol's <code>list_models</code>, enriched from the native listing</td>
-<td>—</td>
+<td><code>:chat_completions</code>, enriched from the native listing</td>
+<td>always — RubyLLM lists through the provider's default protocol, whatever <code>lms_protocol</code> says</td>
 </tr>
 <tr>
 <td>load / unload / download</td>
@@ -1793,9 +1793,9 @@ itself; <code>:native_v0</code> is the Chat Completions protocol pointed at
 <li><strong>Subclass RubyLLM, don't fork it.</strong> Each protocol is RubyLLM's stock
   protocol with the smallest override LM Studio needs — a path, a response
   field, a matching rule.</li>
-<li><strong>Local means no ceremony.</strong> <code>local?</code> is true, so RubyLLM needs no API key
-  and assumes any model id exists; the auth header is sent only when
-  <code>lms_api_key</code> is set.</li>
+<li><strong>Local means no ceremony.</strong> <code>configuration_requirements</code> is empty, so
+  RubyLLM asks for no API key; <code>local?</code> is true, so it assumes any model id
+  exists; the auth header is sent only when <code>lms_api_key</code> is set.</li>
 <li><strong>Paths are relative to the <code>/v1</code> base.</strong> Native endpoints are reached as
   <code>../api/v1/...</code> so a non-default <code>lms_api_base</code> moves everything together.</li>
 </ul>

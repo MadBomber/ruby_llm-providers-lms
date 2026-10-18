@@ -1766,23 +1766,29 @@ reads into <code>Message#thinking</code> and <code>response.tokens.thinking</cod
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">response</span><span class="o">.</span><span class="n">thinking</span><span class="o">.</span><span class="n">text</span><span class="w">        </span><span class="c1"># =&gt; "The user is asking a simple arithmetic question..."</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">response</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">thinking</span><span class="w">      </span><span class="c1"># =&gt; 40</span>
 </span></code></pre></div>
-<p>Reasoning works on every chat protocol except <code>:anthropic</code>.</p>
+<p>Reasoning works on every chat protocol. On <code>:anthropic</code> it travels as
+Anthropic's <code>thinking</code> request field and comes back as a <code>thinking</code> content
+block; see <a href="../anthropic/">The Anthropic API</a>.</p>
 <h2 id="what-a-model-supports">What a model supports<a class="headerlink" href="#what-a-model-supports" title="Permanent link">&para;</a></h2>
 <p><code>chat.with_thinking</code> with no arguments, and <code>chat.with_thinking(false)</code>, both
 resolve against the model registry: the provider reads each model's
 <code>capabilities.reasoning</code> from LM Studio's native listing and records it as
 RubyLLM reasoning options, so RubyLLM knows which efforts the model takes and
 whether it can be switched off at all.</p>
-<div class="language-ruby highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">RubyLLM</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'qwen/qwen3-4b'</span><span class="p">)</span>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">RubyLLM</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'qwen/qwen3.8-27b'</span><span class="p">,</span><span class="w"> </span><span class="ss">provider</span><span class="p">:</span><span class="w"> </span><span class="ss">:lms</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">model</span><span class="o">.</span><span class="n">supports?</span><span class="p">(</span><span class="ss">:reasoning</span><span class="p">)</span><span class="w">                  </span><span class="c1"># =&gt; true</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">model</span><span class="o">.</span><span class="n">reasoning_option_values</span><span class="p">(</span><span class="ss">:effort</span><span class="p">)</span><span class="w">       </span><span class="c1"># =&gt; ["none", "low", "medium", "xhigh"]</span>
 </span></code></pre></div>
+<p>Pass <code>provider: :lms</code>: without it, <code>find</code> searches the whole registry and can
+return another provider's entry for the same model name, with different
+reasoning options.</p>
 <p>That information comes from the native listing, so it is only in
 <code>RubyLLM.models</code> for models present in the catalog you registered — see
 <a href="../../models/catalog/">The Packaged Catalog</a>.</p>
 <p>A model that reports no way to stop reasoning — gpt-oss lists only
-<code>low</code>/<code>medium</code>/<code>high</code> — makes <code>with_thinking(false)</code> raise. That is the
-registry telling you the truth about the model, not a gap in the catalog.</p>
+<code>low</code>/<code>medium</code>/<code>high</code> — makes <code>with_thinking(false)</code> raise when the request is
+sent, on <code>ask</code>. That is the registry telling you the truth about the model,
+not a gap in the catalog.</p>
 <h2 id="two-vocabularies-translated-for-you">Two vocabularies, translated for you<a class="headerlink" href="#two-vocabularies-translated-for-you" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1815,10 +1821,10 @@ endpoints accept <code>reasoning_effort</code> for any model and silently ignore
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Model 'bible-study-phi3-mini' does not expose reasoning configuration.
 </span></code></pre></div>
 <p>So on <code>:native_chat</code>, only ask for reasoning from a model whose listing
-reports it. <code>with_thinking</code> and <code>with_thinking(false)</code> already refuse
-client-side for a model in the registry that reports none; an explicit
-<code>with_thinking(effort:)</code>, or a model id not in your catalog, reaches the
-server and gets the error above.</p>
+reports it. <code>with_thinking</code> and <code>with_thinking(false)</code> refuse before any
+request is sent (on <code>ask</code>) for a model that reports no reasoning options —
+one in the registry without them, or one not in your catalog at all. Only an
+explicit <code>with_thinking(effort:)</code> reaches the server and gets the error above.</p>
 
 
 

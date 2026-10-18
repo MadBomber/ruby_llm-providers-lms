@@ -1855,7 +1855,8 @@ is downloaded.</p>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">chat</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s1">'What did I just say?'</span><span class="p">)</span><span class="w">  </span><span class="c1"># multi-turn context, as with any provider</span>
 </span></code></pre></div>
 <p>Because LM Studio is a local provider, RubyLLM assumes any model id you pass
-exists — no registry lookup, no <code>assume_model_exists:</code> — and LM Studio
+exists — it needs no entry in the model registry and no
+<code>assume_model_exists:</code> — and LM Studio
 just-in-time loads the model if it isn't loaded yet. Expect the first request
 to a cold model to take a while.</p>
 <h2 id="streaming">Streaming<a class="headerlink" href="#streaming" title="Permanent link">&para;</a></h2>

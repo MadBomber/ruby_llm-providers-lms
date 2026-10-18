@@ -1651,8 +1651,9 @@ provider's model registry so <code>RubyLLM.models</code> has something to show.<
 <em>you</em> have downloaded, so your catalog will be different.</p>
 </div>
 <p><code>RubyLLM.models.refresh</code> does <strong>not</strong> query your LM Studio server: provider
-gems that ship a registry file are excluded from the live fetch, and refresh
-just re-reads the registered <code>models.json</code>. Your live server is still the
+gems that ship a registry file are excluded from the live fetch. Refresh still
+updates the remote providers, but for <code>:lms</code> it only re-reads the registered
+<code>models.json</code>. Your live server is still the
 source of truth, reached differently depending on what you need:</p>
 <dl>
 <dt>Chatting, embedding, judging</dt>

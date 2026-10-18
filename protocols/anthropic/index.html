@@ -1754,6 +1754,11 @@ path. LM Studio wants no credentials and no <code>anthropic-version</code> heade
 <li>Streaming, with proper <code>message_start</code> / <code>content_block_delta</code> SSE events</li>
 <li>Tool calls: <code>tool_use</code> blocks with <code>stop_reason: "tool_use"</code>, executed as
   ordinary <code>RubyLLM::Tool</code> objects in your process</li>
+<li>Reasoning: <code>with_thinking(effort: :low)</code> puts Anthropic's <code>thinking</code> request
+  field on the wire, LM Studio honors it, and the reasoning comes back as a
+  <code>thinking</code> content block in <code>response.thinking.text</code>; <code>with_thinking(false)</code>
+  turns it off. Anthropic's usage block carries no reasoning token count, so
+  <code>response.tokens.thinking</code> is <code>nil</code> here. Verified on LM Studio 0.4.26.</li>
 </ul>
 <h2 id="what-doesnt">What doesn't<a class="headerlink" href="#what-doesnt" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
@@ -1765,8 +1770,8 @@ schema, two protocols:</p>
 </span></code></pre></div>
 <p>Use <code>:chat_completions</code> for structured output.</p>
 </div>
-<p>Reasoning control does not reach the server on this protocol. Embeddings and
-judgments are unaffected: they always go to their own endpoints.</p>
+<p>Embeddings and judgments are unaffected: they always go to their own
+endpoints.</p>
 <p>Example <code>12_anthropic_protocol.rb</code> shows streaming, tools and the <code>with_schema</code>
 trap side by side.</p>
 

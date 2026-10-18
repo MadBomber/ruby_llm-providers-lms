@@ -1783,8 +1783,9 @@ so:</p>
 <p>A non-image attachment such as a PDF raises
 <code>RubyLLM::UnsupportedAttachmentError</code> before any request is sent.</p>
 <h2 id="how-images-travel">How images travel<a class="headerlink" href="#how-images-travel" title="Permanent link">&para;</a></h2>
-<p>Both endpoints take images as inline base64 data URLs — the gem reads the file
-and encodes it, so LM Studio never has to fetch anything:</p>
+<p>Both endpoints take images as inline base64 data URLs — RubyLLM reads the file
+and encodes it, and the gem puts it where each endpoint expects, so LM Studio
+never has to fetch anything:</p>
 <table>
 <thead>
 <tr>

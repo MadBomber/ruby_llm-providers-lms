@@ -1707,7 +1707,8 @@ downloaded behind all of them. This gem registers a protocol for each:</p>
 </tr>
 </tbody>
 </table>
-<p>The first three are <strong>chat</strong> protocols, selected with <code>lms_protocol</code>. The
+<p>The first three APIs carry the five <strong>chat</strong> protocols, selected with
+<code>lms_protocol</code>. The
 decision protocols serve only judgments and are selected separately with
 <code>lms_judgment_protocol</code> — see <a href="../getting-started/configuration/">Configuration</a>.</p>
 <h2 id="two-choices-not-one">Two choices, not one<a class="headerlink" href="#two-choices-not-one" title="Permanent link">&para;</a></h2>
@@ -1716,7 +1717,7 @@ decision protocols serve only judgments and are selected separately with
 <p><strong>The protocol decides what is expressible.</strong> <code>with_schema</code> is honored on
 <code>:chat_completions</code> and <code>:native_v0</code> and silently ignored on <code>:responses</code>
 and <code>:anthropic</code> — same model, same schema, prose where you expected JSON.
-Reasoning is spelled <code>none</code>/<code>low</code>/<code>medium</code>/<code>high</code>/<code>xhigh</code> on the OpenAI
+Reasoning is spelled <code>none</code>/<code>minimal</code>/<code>low</code>/<code>medium</code>/<code>high</code>/<code>xhigh</code> on the OpenAI
 endpoints and <code>off</code>/<code>low</code>/<code>medium</code>/<code>high</code>/<code>xhigh</code>/<code>on</code> on the native one.
 That much is consistent for every model, and this gem papers over what it
 can.</p>
@@ -1782,7 +1783,7 @@ assuming a capability carries across either axis.</p>
 <td>yes</td>
 <td>yes</td>
 <td>yes</td>
-<td>sampling only</td>
+<td>sampling settings only — see <a href="native/">Native REST API</a></td>
 </tr>
 <tr>
 <td>Server-stored conversations</td>
@@ -1796,7 +1797,7 @@ assuming a capability carries across either axis.</p>
 <td>Reasoning control</td>
 <td>yes</td>
 <td>yes</td>
-<td><strong>no</strong></td>
+<td>yes</td>
 <td>yes</td>
 <td>yes</td>
 </tr>
@@ -1804,12 +1805,15 @@ assuming a capability carries across either axis.</p>
 <td>Reasoning text returned</td>
 <td>yes</td>
 <td>yes</td>
-<td>no</td>
+<td>yes</td>
 <td>yes</td>
 <td>yes</td>
 </tr>
 </tbody>
 </table>
+<p>Checked against LM Studio 0.4.24+1; the <code>:anthropic</code> reasoning rows and the
+decision endpoints against 0.4.26. The cells that say the server <em>ignores</em>
+something describe observed behavior, not anything the gem enforces.</p>
 <p>Where a protocol ignores something silently rather than raising, its page says
 so — those are the cases that cost you an afternoon. Example
 <code>15_protocol_matrix.rb</code> runs the <code>with_schema</code> row against your own models.</p>
