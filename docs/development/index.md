@@ -27,9 +27,11 @@ assuming an endpoint behaves exactly as documented here.
 
 Two kinds:
 
-- `spec/ruby_llm/providers/lms_spec.rb` and the rest of
+- `spec/ruby_llm/providers/lms_spec.rb` and most of
   `spec/ruby_llm/providers/lms/` — unit specs for the provider: registration,
   protocols, configuration, listing, routing, judgment rendering and parsing.
+  The two `*_live_spec.rb` files there are `:live` and record cassettes like
+  the contract specs.
 - `spec/ruby_llm/*_spec.rb` — contract specs adapted from
   [RubyLLM's live specs](https://github.com/crmne/ruby_llm/tree/main/spec/ruby_llm),
   tagged `:live` and driven by the model matrices in `spec/support/models.rb`.
@@ -66,7 +68,8 @@ Model ids are machine-specific. Put ids from `lms ls` into
 | `REASONING_OFF_MODELS` | one of those that also reports LM Studio's `off` |
 | `VISION_MODELS` | a model flagged `vision: true` |
 | `EMBEDDING_MODELS` | an embedding model |
-| `NATIVE_CHAT_MODELS`, `NATIVE_REASONING_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+| `NATIVE_CHAT_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+| `NATIVE_REASONING_MODELS` | a model that emits reasoning items on the native endpoint (gpt-oss does; most instruct fine-tunes do not) |
 | `JUDGMENT_MODELS` | decision models LM Studio tags `type: "decision"`; add `vision: true` for ones with a vision adapter |
 
 Matrices for operations LM Studio doesn't support (image generation, speech,
@@ -92,11 +95,13 @@ from `docs/` and `mkdocs.yml`:
 
 ```sh
 mkdocs serve           # live preview at http://127.0.0.1:8000
-mkdocs build --strict  # what CI checks
+mkdocs build --strict  # what the deploy workflow runs; fails on a broken link
 ```
 
-Pushes to `main` or `develop` that touch the docs publish the site to GitHub
-Pages (`.github/workflows/deploy-github-pages.yml`).
+Pushes to `main` or `develop` that touch `docs/`, `mkdocs.yml` or the workflow
+itself publish the site to GitHub Pages
+(`.github/workflows/deploy-github-pages.yml`); it can also be run by hand from
+the Actions tab.
 
 ## CI
 

@@ -88,7 +88,7 @@ return. See [Judgments](../judgments/index.md).
 
 | Situation | Raised |
 | --- | --- |
-| Server not running | `RubyLLM::Error` — "start it with `lms server start`" |
+| Server not running | `RubyLLM::Error` — "Cannot connect to the LM Studio server at …. Start it with `lms server start`." |
 | Unknown model, or a chat model asked for a judgment | `RubyLLM::BadRequestError` with LM Studio's message |
 | A decision response missing an answer | `RubyLLM::Error` — "LM Studio Decisions returned an invalid judgment" |
 | A non-image attachment on a judgment | `RubyLLM::UnsupportedAttachmentError` |

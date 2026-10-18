@@ -10,7 +10,8 @@ downloaded behind all of them. This gem registers a protocol for each:
 | [Native REST](native.md) | v0: `POST /api/v0/chat/completions`, `GET /api/v0/models` <br> v1: `POST /api/v1/chat`, `GET /api/v1/models`, `POST /api/v1/models/load`, `/unload`, `/download` | `:native_v0`, `:native_chat` |
 | [Decisions](../judgments/endpoints.md) | `POST /v1/decisions`, `POST /v1/systemone` | `:decisions` (default for judgments), `:system_one` |
 
-The first three are **chat** protocols, selected with `lms_protocol`. The
+The first three APIs carry the five **chat** protocols, selected with
+`lms_protocol`. The
 decision protocols serve only judgments and are selected separately with
 `lms_judgment_protocol` — see [Configuration](../getting-started/configuration.md).
 
@@ -21,7 +22,7 @@ decision protocols serve only judgments and are selected separately with
     **The protocol decides what is expressible.** `with_schema` is honored on
     `:chat_completions` and `:native_v0` and silently ignored on `:responses`
     and `:anthropic` — same model, same schema, prose where you expected JSON.
-    Reasoning is spelled `none`/`low`/`medium`/`high`/`xhigh` on the OpenAI
+    Reasoning is spelled `none`/`minimal`/`low`/`medium`/`high`/`xhigh` on the OpenAI
     endpoints and `off`/`low`/`medium`/`high`/`xhigh`/`on` on the native one.
     That much is consistent for every model, and this gem papers over what it
     can.
@@ -47,10 +48,14 @@ Stay on the default unless you need something only another column offers.
 | Client-side tools (`with_tools`) | yes | yes | yes | yes | **no** — raises; use MCP integrations |
 | Structured output (`with_schema`) | yes | **ignored, silently** | **ignored, silently** | yes | **no** — raises |
 | Inference stats | no | no | no | yes, via `raw` | yes, via `tokens` |
-| LM Studio request extras | yes | yes | yes | yes | sampling only |
+| LM Studio request extras | yes | yes | yes | yes | sampling settings only — see [Native REST API](native.md) |
 | Server-stored conversations | no | no | no | no | yes |
-| Reasoning control | yes | yes | **no** | yes | yes |
-| Reasoning text returned | yes | yes | no | yes | yes |
+| Reasoning control | yes | yes | yes | yes | yes |
+| Reasoning text returned | yes | yes | yes | yes | yes |
+
+Checked against LM Studio 0.4.24+1; the `:anthropic` reasoning rows and the
+decision endpoints against 0.4.26. The cells that say the server *ignores*
+something describe observed behavior, not anything the gem enforces.
 
 Where a protocol ignores something silently rather than raising, its page says
 so — those are the cases that cost you an afternoon. Example

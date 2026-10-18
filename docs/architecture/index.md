@@ -17,7 +17,7 @@ provider answers by operation, not just by configuration:
 | chat (`ask`, streaming, tools) | the chat protocol | `lms_protocol`, default `:chat_completions` |
 | embed | `:chat_completions` → `POST /v1/embeddings` | always — LM Studio serves embeddings nowhere else |
 | judge | `:decisions` or `:system_one` | `lms_judgment_protocol`, default `:decisions` |
-| list models | the chat protocol's `list_models`, enriched from the native listing | — |
+| list models | `:chat_completions`, enriched from the native listing | always — RubyLLM lists through the provider's default protocol, whatever `lms_protocol` says |
 | load / unload / download | the provider's own `ModelManagement` methods | — |
 
 The judgment route is the provider's private `resolve_protocol` override: when
@@ -56,8 +56,8 @@ itself; `:native_v0` is the Chat Completions protocol pointed at
 - **Subclass RubyLLM, don't fork it.** Each protocol is RubyLLM's stock
   protocol with the smallest override LM Studio needs — a path, a response
   field, a matching rule.
-- **Local means no ceremony.** `local?` is true, so RubyLLM needs no API key
-  and assumes any model id exists; the auth header is sent only when
-  `lms_api_key` is set.
+- **Local means no ceremony.** `configuration_requirements` is empty, so
+  RubyLLM asks for no API key; `local?` is true, so it assumes any model id
+  exists; the auth header is sent only when `lms_api_key` is set.
 - **Paths are relative to the `/v1` base.** Native endpoints are reached as
   `../api/v1/...` so a non-default `lms_api_base` moves everything together.

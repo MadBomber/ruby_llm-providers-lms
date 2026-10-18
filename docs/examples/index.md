@@ -17,9 +17,9 @@ environment (a `.env` file is honored) and defines the default models.
 | --- | --- | --- |
 | `LMS_API_BASE` | `http://localhost:1234/v1` | all |
 | `LMS_API_KEY` | none | all, only for a server behind auth |
-| `LMS_MODEL` | `qwen/qwen3.8-27b` | the chat demos, and the replies in `20` |
-| `LMS_EMBEDDING_MODEL` | — | `05` |
-| `LMS_REASONING_MODEL` | — | `13` |
+| `LMS_MODEL` | `qwen/qwen3.8-27b` | the chat demos, the chat-model check in `18`, and the replies in `20` |
+| `LMS_EMBEDDING_MODEL` | `text-embedding-nomic-embed-text-v1.5` | `05` |
+| `LMS_REASONING_MODEL` | `openai/gpt-oss-20b` | `13` |
 | `LMS_DECISION_MODEL` | `d1-omni-600m` | `16`-`20` |
 
 Model ids are machine-specific: use ones `lms ls` shows on your machine.

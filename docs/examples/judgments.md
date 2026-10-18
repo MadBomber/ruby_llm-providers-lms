@@ -35,6 +35,7 @@ model:         d1-omni-600m
 input tokens:  385
 output tokens: 0 (a decision model writes nothing)
 round trip:    127 ms (the first call includes loading the model)
+...
 ```
 
 ## 17 — a reusable judge

@@ -17,7 +17,8 @@ chat.ask('What did I just say?')  # multi-turn context, as with any provider
 ```
 
 Because LM Studio is a local provider, RubyLLM assumes any model id you pass
-exists — no registry lookup, no `assume_model_exists:` — and LM Studio
+exists — it needs no entry in the model registry and no
+`assume_model_exists:` — and LM Studio
 just-in-time loads the model if it isn't loaded yet. Expect the first request
 to a cold model to take a while.
 

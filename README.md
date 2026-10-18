@@ -126,10 +126,11 @@ Stay on the default unless you need something only another column offers.
 | Inference stats | no | no | no | yes, via `raw` | yes, via `tokens` |
 | LM Studio request extras | yes | yes | yes | yes | sampling only — see below |
 | Server-stored conversations | no | no | no | no | yes |
-| Reasoning control | yes | yes | **no** | yes | yes |
-| Reasoning text returned | yes | yes | no | yes | yes |
+| Reasoning control | yes | yes | yes | yes | yes |
+| Reasoning text returned | yes | yes | yes | yes | yes |
 
-Checked against LM Studio 0.4.24+1 (see [Tested against](#tested-against)).
+Checked against LM Studio 0.4.24+1, the `:anthropic` reasoning rows against
+0.4.26 (see [Tested against](#tested-against)).
 Where a protocol ignores something silently rather than raising, the section
 below says so — those are the cases that cost you an afternoon.
 
@@ -201,10 +202,10 @@ Model 'bible-study-phi3-mini' does not expose reasoning configuration.
 ```
 
 So on `:native_chat`, only ask for reasoning from a model whose listing
-reports it. `with_thinking` and `with_thinking(false)` already refuse
-client-side for a model in the registry that reports none; an explicit
-`with_thinking(effort:)`, or a model id not in your catalog, reaches the
-server and gets the error above.
+reports it. `with_thinking` and `with_thinking(false)` refuse before any
+request is sent (on `ask`) for a model that reports no reasoning options —
+one in the registry without them, or one not in your catalog at all. Only an
+explicit `with_thinking(effort:)` reaches the server and gets the error above.
 
 Which efforts you can ask for depends on what you have downloaded:
 
@@ -303,6 +304,10 @@ Plain exchanges, streaming (proper `message_start` / `content_block_delta`
 SSE events) and tool calls (`tool_use` blocks with `stop_reason: "tool_use"`,
 executed as ordinary `RubyLLM::Tool` objects in your process) all work; the
 live specs in `spec/ruby_llm/chat_anthropic_spec.rb` cover all three.
+Reasoning works too: `with_thinking(effort: :low)` sends Anthropic's
+`thinking` field, and the reasoning comes back as a `thinking` content block
+in `response.thinking.text` (no thinking token count, since Anthropic's usage
+block has none).
 
 **`with_schema` does not work here, and fails quietly.** LM Studio ignores the
 schema and nothing raises. The same model and schema, two protocols:
@@ -389,7 +394,9 @@ response = chat.ask('Hello')
   filtering. Executed tool calls appear in `response.raw.body['output']`.
 - **Per-request context length** — `with_provider_options(context_length: 8192)`.
 - **Opting out of storage** — `with_provider_options(store: false)` keeps the
-  conversation off the server, at the cost of multi-turn continuity.
+  conversation off the server. The chat is then single-turn: a second `ask`
+  raises, because the endpoint cannot replay history and has nothing stored
+  to continue from.
 
 - **Sampling settings** — `top_p`, `top_k`, `min_p` and `repeat_penalty` are
   part of the native request schema, so `with_provider_options(top_k: 40)` and
@@ -479,8 +486,9 @@ Kev 0.8B picks `:other`.
 RubyLLM's [judgments guide](https://rubyllm.com/judgments/) covers the full
 DSL: structured input, dynamic options, and thresholds.
 
-**You need a decision model.** A chat model is rejected outright: *"There are
-no downloaded decision models."* A decision model has to be one LM Studio
+**You need a decision model.** A chat model is rejected outright — *"Invalid
+model identifier"*, or *"There are no downloaded decision models"* when you
+have none at all. A decision model has to be one LM Studio
 itself identifies as such. A model sharing a decision model's name is not
 enough: an MLX conversion of Clef Flash loads as an ordinary LLM and is
 rejected by both endpoints. `GET /api/v1/models` reports the ones LM Studio
@@ -628,6 +636,7 @@ models are resident right now.
 | Component | Version |
 | --- | --- |
 | LM Studio (macOS) | 0.4.24+1 |
+| LM Studio (macOS), judgments and `:anthropic` reasoning | 0.4.26 |
 | `lms` CLI | commit `ff50809` |
 | RubyLLM | 2.1.1 (cassettes recorded on 2.0.0) |
 
@@ -674,7 +683,9 @@ the ones that need a particular kind of model are commented there:
 | `REASONING_OFF_MODELS` | one of those that also reports LM Studio's `off` |
 | `VISION_MODELS` | a model flagged `vision: true` |
 | `EMBEDDING_MODELS` | an embedding model |
-| `NATIVE_CHAT_MODELS`, `NATIVE_REASONING_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+| `NATIVE_CHAT_MODELS`, `MANAGEMENT_MODEL` | small models, so load/unload cycles stay fast |
+| `NATIVE_REASONING_MODELS` | a model that emits reasoning items on the native endpoint (gpt-oss does; most instruct fine-tunes do not) |
+| `JUDGMENT_MODELS` | decision models LM Studio tags `type: "decision"`; `vision: true` for ones with a vision adapter |
 
 The portable contract specs are adapted from
 [RubyLLM's live specs](https://github.com/crmne/ruby_llm/tree/main/spec/ruby_llm).

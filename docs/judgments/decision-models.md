@@ -40,7 +40,7 @@ Measured on an M2 Max with the questions from example `18_decision_models.rb`
 | Model | Time per judgment | Quality, in practice |
 | --- | --- | --- |
 | D1 Omni 600M | ~30 ms | Strong on clear-cut text and spam; noticeably sensitive to wording; reads images reliably only over `:system_one` |
-| Kev 0.8B | ~65 ms | Least sure of itself; picked the wrong team for an obvious billing ticket and could not spot a gift-card scam |
+| Kev 0.8B | ~65 ms | Least sure of itself; sent "I was charged twice. Please fix it today." to `other` rather than `billing`, and could not spot a gift-card scam |
 | Clef Flash | ~600 ms | Most accurate and most consistent across wording and endpoints; reads images over both endpoints |
 
 A reasonable default: **start with D1 Omni 600M**, tune your questions on it,

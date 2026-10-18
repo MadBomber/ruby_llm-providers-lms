@@ -1,7 +1,7 @@
 # The OpenAI API
 
 The surface most code already targets, and the one with the fewest surprises:
-everything RubyLLM can express works.
+on Chat Completions, everything RubyLLM can express works.
 
 ## Chat Completions — `:chat_completions`
 

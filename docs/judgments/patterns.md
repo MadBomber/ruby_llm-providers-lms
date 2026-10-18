@@ -71,6 +71,11 @@ examples:
 | "Is the sender asking a question or waiting for an answer from us?" (broken-item complaint) | 0.26 | — | — |
 | "Does this message need a response from our team?" (same complaint) | 0.80 | 0.65 | 0.95 |
 
+The rows come from separate runs with different question batches, and a figure
+moves a little with what else is in the request: the "satisfied" question
+scored 0.98 on D1 Omni 600M here and 0.997 when batched with the questions on
+the [Judgments](index.md) page.
+
 What worked:
 
 - **Short, plain, direct questions.** The wordier "Is this an unsolicited

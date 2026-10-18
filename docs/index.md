@@ -23,8 +23,7 @@ and the `:lms` provider talks to `http://localhost:1234/v1`.
 
 ## What it covers
 
-LM Studio serves four families of API on one port, and this gem speaks all of
-them:
+LM Studio serves several APIs on one port, and this gem speaks all of them:
 
 | API | What you get | Protocols |
 | --- | --- | --- |

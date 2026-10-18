@@ -37,8 +37,9 @@ A non-image attachment such as a PDF raises
 
 ## How images travel
 
-Both endpoints take images as inline base64 data URLs — the gem reads the file
-and encodes it, so LM Studio never has to fetch anything:
+Both endpoints take images as inline base64 data URLs — RubyLLM reads the file
+and encodes it, and the gem puts it where each endpoint expects, so LM Studio
+never has to fetch anything:
 
 | Endpoint | Where the image goes |
 | --- | --- |

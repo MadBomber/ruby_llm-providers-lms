@@ -26,6 +26,7 @@ server knows:
 
 | Key | From | Example |
 | --- | --- | --- |
+| `owned_by` | the OpenAI listing | `"organization_owner"` |
 | `publisher`, `arch`, `quantization`, `compatibility_type`, `state` | v0 and v1 | `"qwen"`, `"qwen35"`, `"Q4_K_M"`, `"gguf"`, `"loaded"` |
 | `display_name`, `description` | v1 | `"Qwen3 27B"` |
 | `params_string`, `size_bytes`, `bits_per_weight` | v1 | `"27B"`, `17742039110`, `4` |

@@ -79,7 +79,8 @@ Per-request context length
 
 Opting out of storage
 :   `with_provider_options(store: false)` keeps the conversation off the
-    server, at the cost of multi-turn continuity.
+    server. The chat is then single-turn: a second `ask` raises, because the
+    endpoint cannot replay history and has nothing stored to continue from.
 
 Sampling settings
 :   `top_p`, `top_k`, `min_p` and `repeat_penalty` are part of the native
@@ -96,7 +97,8 @@ Sampling settings
 
 The endpoint reports no stop reason of its own. When a generation runs into
 the `max_output_tokens` the request asked for, the provider reports
-`finish_reason: :length` from the token counts.
+`finish_reason: :length` from the token counts. (Note the spelling: RubyLLM's
+stock protocols report truncation as `:max_tokens`.)
 
 ## Model listing and management
 
